@@ -18,7 +18,7 @@ namespace AutoFilterPresets
     {
         private static readonly ILogger Logger = LogManager.GetLogger();
         public static IPlayniteAPI PlayniteAPI { get; private set; }
-        public static SettingsViewModel Settings { get; set; }
+        public static SettingsViewModel SettingsViewModel { get; set; }
         private static readonly string PluginFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public override Guid Id { get; } = Guid.Parse("1844176c-4d02-4bf8-b852-78b36a9de193");
 
@@ -27,7 +27,7 @@ namespace AutoFilterPresets
         public AutoFilterPresets(IPlayniteAPI api) : base(api)
         {
             PlayniteAPI = api;
-            Settings = new SettingsViewModel(this);
+            SettingsViewModel = new SettingsViewModel(this);
             Properties = new GenericPluginProperties
             {
                 HasSettings = true
@@ -37,18 +37,18 @@ namespace AutoFilterPresets
             AddSettingsSupport(new AddSettingsSupportArgs
             {
                 SourceName = "AutoFilterPresets",
-                SettingsRoot = $"{nameof(Settings)}.{nameof(Settings.Settings)}"
+                SettingsRoot = $"{nameof(SettingsViewModel)}.{nameof(SettingsViewModel.Settings)}"
             });
 
             if (PlayniteAPI.ApplicationInfo.Mode == ApplicationMode.Fullscreen)
             {
-                Model = new AutoFiltersModel(PlayniteAPI);
+                Model = new AutoFiltersModel(PlayniteAPI, SettingsViewModel.Settings);
             }
         }
 
         public override ISettings GetSettings(bool firstRunSettings)
         {
-            return Settings;
+            return SettingsViewModel;
         }
 
         public override UserControl GetSettingsView(bool firstRunSettings)

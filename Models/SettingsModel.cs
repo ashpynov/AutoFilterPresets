@@ -6,20 +6,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterPresets
+namespace AutoFilterPresets.Models
 {
+    public enum SortingOrder
+    {
+        Alphabet = 0,
+        WithinGroups = 1,
+        Custom = 2
+    }
     public class AutoFilterPresetsSettings : ObservableObject
     {
-        private string option1 = string.Empty;
-        private bool option2 = false;
-        private bool optionThatWontBeSaved = false;
+        private bool createSources = true;
+        public bool CreateSources { get => createSources; set => SetValue(ref createSources, value); }
 
-        public string Option1 { get => option1; set => SetValue(ref option1, value); }
-        public bool Option2 { get => option2; set => SetValue(ref option2, value); }
-        // Playnite serializes settings object to a JSON object and saves it as text file.
-        // If you want to exclude some property from being saved then use `JsonDontSerialize` ignore attribute.
-        [DontSerialize]
-        public bool OptionThatWontBeSaved { get => optionThatWontBeSaved; set => SetValue(ref optionThatWontBeSaved, value); }
+        private bool createPlatforms = true;
+        public bool CreatePlatforms { get => createPlatforms; set => SetValue(ref createPlatforms, value); }
+
+        private bool favoritesFirst = true;
+        public bool FavoritesFirst { get => favoritesFirst; set => SetValue(ref favoritesFirst, value); }
+
+        private bool loopSelection = true;
+        public bool LoopSelection { get => loopSelection; set => SetValue(ref loopSelection, value); }
+
+        private bool altBringIntoView = true;
+        public bool AltBringIntoView { get => altBringIntoView; set => SetValue(ref altBringIntoView, value); }
+
+        private SortingOrder orderBy = SortingOrder.Alphabet;
+        public SortingOrder OrderBy { get => orderBy; set => SetValue(ref orderBy, value);}
+
     }
 
     public class SettingsViewModel : ObservableObject, ISettings

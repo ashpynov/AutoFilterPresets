@@ -1,5 +1,22 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="LOC_AutoFilterSettings_General">General</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_CustomOrder">Custom Order</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Aliases">Aliases</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_BlackList">Black List</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_AutomaticFilters">Automatic filters:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_CreateSources">by Sources</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_CreatePlatforms">by Platforms</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_FavoritesFirst">Favorite games first</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_BehaviorOptions">Behaviour options:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_LoopSelection">Loop preset selection</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_AltBringIntoView">Alternative bring selected to view</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_Sorting">Presets Sorting:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Alphabet">Alphabetic</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_WithinGroups">Within type</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Custom">Custom</sys:String>
 
 </ResourceDictionary>

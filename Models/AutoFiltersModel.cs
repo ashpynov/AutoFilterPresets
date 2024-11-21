@@ -36,11 +36,14 @@ namespace AutoFilterPresets.Models
         private ItemsControl ItemsFilterPresets;
 
         private Control FilterPresetSelector;
+        private readonly AutoFilterPresetsSettings Settings;
 
 
-        public AutoFiltersModel( IPlayniteAPI playniteAPI )
+        public AutoFiltersModel( IPlayniteAPI playniteAPI, AutoFilterPresetsSettings settings )
         {
             PlayniteAPI = playniteAPI;
+            Settings = settings;
+
             mainModel = PlayniteAPI.MainView
                     .GetType()
                     .GetField("mainModel", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -67,7 +70,7 @@ namespace AutoFilterPresets.Models
 
         private List<FilterPreset> PlatformsAutoFilter()
         {
-            return PlayniteAPI.Database.Games
+            var platforms = PlayniteAPI.Database.Games
                 .Where(g => g.Hidden == false && g.Platforms?.HasItems() == true)
                 .SelectMany(g => g.Platforms)
                 .Distinct()
@@ -77,8 +80,8 @@ namespace AutoFilterPresets.Models
                     FilterPreset filter = new FilterPreset()
                     {
                         Name = safeName,
-                        SortingOrder = SortOrder.Favorite,
-                        SortingOrderDirection = SortOrderDirection.Descending,
+                        SortingOrder = Settings.FavoritesFirst ? SortOrder.Favorite : SortOrder.Name,
+                        SortingOrderDirection =  Settings.FavoritesFirst ? SortOrderDirection.Descending : SortOrderDirection.Ascending,
                         Settings = new FilterPresetSettings()
                         {
                             Platform = new IdItemFilterItemProperties(platform.Id)
@@ -87,6 +90,9 @@ namespace AutoFilterPresets.Models
                     return filter;
                 })
                 .ToList();
+
+            platforms.Sort((x, y) => x.Name.CompareTo(y.Name));
+            return platforms;
         }
 
         private List<FilterPreset> SourcesAutoFilter()
@@ -101,8 +107,8 @@ namespace AutoFilterPresets.Models
                     FilterPreset filter = new FilterPreset()
                     {
                         Name = safeName,
-                        SortingOrder = SortOrder.Favorite,
-                        SortingOrderDirection = SortOrderDirection.Descending,
+                        SortingOrder = Settings.FavoritesFirst ? SortOrder.Favorite : SortOrder.Name,
+                        SortingOrderDirection =  Settings.FavoritesFirst ? SortOrderDirection.Descending : SortOrderDirection.Ascending,
                         Settings = new FilterPresetSettings()
                         {
                             Source = new IdItemFilterItemProperties(source.Id)
@@ -111,6 +117,8 @@ namespace AutoFilterPresets.Models
                     return filter;
                 })
                 .ToList();
+
+            sources.Sort((x, y) => x.Name.CompareTo(y.Name));
             return sources;
         }
 
@@ -119,8 +127,21 @@ namespace AutoFilterPresets.Models
         {
             dynamic model = Application.Current.MainWindow.DataContext;
             var presets = model.SortedFilterFullscreenPresets as List<FilterPreset>;
-            presets.AddRange(SourcesAutoFilter().Where(s => presets.FindIndex(p => AreFiltersEqual(s, p)) == -1));
-            presets.AddRange(PlatformsAutoFilter().Where(s => presets.FindIndex(p => AreFiltersEqual(s, p)) == -1));
+            if (Settings.CreateSources)
+            {
+                presets.AddRange(SourcesAutoFilter().Where(s => presets.FindIndex(p => AreFiltersEqual(s, p)) == -1));
+            }
+
+            if (Settings.CreatePlatforms)
+            {
+                presets.AddRange(PlatformsAutoFilter().Where(s => presets.FindIndex(p => AreFiltersEqual(s, p)) == -1));
+            }
+
+            if (Settings.OrderBy == SortingOrder.Alphabet)
+            {
+                presets.Sort((x, y) => x.Name.CompareTo(y.Name));
+            }
+
             AutoPresets = presets;
 
             Logger.Debug($"Automatic Filters rebuilded with {AutoPresets.Count} items");
@@ -159,14 +180,16 @@ namespace AutoFilterPresets.Models
             else
             {
                 var nextIndex = AutoPresets.FindIndex(p => AreFiltersEqual(p,ActiveFilterPreset)) + (next ? 1 : -1);
+
                 if (nextIndex < 0)
                 {
-                    nextIndex = AutoPresets.Count - 1;
+                    nextIndex = Settings.LoopSelection ? AutoPresets.Count - 1 : 0;
                 }
                 else if (nextIndex > AutoPresets.Count - 1)
                 {
-                    nextIndex = 0;
+                    nextIndex = Settings.LoopSelection ? 0 : AutoPresets.Count - 1;
                 }
+
                 ActiveFilterPreset = AutoPresets[nextIndex];
             }
 
@@ -208,6 +231,13 @@ namespace AutoFilterPresets.Models
 
             if (index == -1) return;
             CheckBox item = ItemsFilterPresets.Items[index] as CheckBox;
+
+            if (!Settings.AltBringIntoView)
+            {
+                item.BringIntoView();
+                return;
+            }
+
             if (item.ActualWidth == 0 || item.ActualHeight == 0) return;
 
             var scrollViewer = VisualTreeHelperEx.FindVisualChild<ScrollViewer>(FilterPresetSelector);
