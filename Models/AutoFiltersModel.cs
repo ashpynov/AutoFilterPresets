@@ -144,6 +144,8 @@ namespace AutoFilterPresets.Models
 
             AutoPresets = presets;
 
+            UpdateFilterPresetSelector();
+
             Logger.Debug($"Automatic Filters rebuilded with {AutoPresets.Count} items");
         }
 

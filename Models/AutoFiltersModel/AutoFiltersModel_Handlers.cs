@@ -40,7 +40,6 @@ namespace AutoFilterPresets.Models
             {
                 RegisterHandlers();
                 Update();
-                UpdateFilterPresetSelector();
             }
         }
 
@@ -51,7 +50,10 @@ namespace AutoFilterPresets.Models
 
         private void OnDatabaseUpdated(object sender, object e)
         {
-            Update();
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Update();
+            }));
         }
     }
 }
