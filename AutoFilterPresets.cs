@@ -27,7 +27,7 @@ namespace AutoFilterPresets
         public AutoFilterPresets(IPlayniteAPI api) : base(api)
         {
             PlayniteAPI = api;
-            SettingsViewModel = new SettingsViewModel(this);
+            SettingsViewModel = new SettingsViewModel(this, api);
             Properties = new GenericPluginProperties
             {
                 HasSettings = true

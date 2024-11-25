@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:String x:Key="LOC_AutoFilterSettings_General">General</sys:String>
-    <sys:String x:Key="LOC_AutoFilterSettings_CustomOrder">Custom Order</sys:String>
+
     <sys:String x:Key="LOC_AutoFilterSettings_Aliases">Aliases</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_BlackList">Black List</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_AutomaticFilters">Automatic filters:</sys:String>
@@ -18,5 +18,10 @@
     <sys:String x:Key="LOC_AutoFilterSettings_Alphabet">Alphabetic</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_WithinGroups">Within type</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_Custom">Custom</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_CustomOrder">Custom Order:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_PRESETS">PRESETS</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SOURCES">SOURCES</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_PLATFORMS">PLATFORMS</sys:String>
 
 </ResourceDictionary>

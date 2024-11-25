@@ -1,5 +1,10 @@
 AddonId: 'AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193'
 Packages:
+- Version: 0.4
+    RequiredApiVersion: 6.11.0
+    ReleaseDate: 2024-12-01
+    PackageUrl: https://github.com/ashpynov/AutoFilterPresets/releases/download/v0.4/AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193_0_4.pext
+    Changelog:
 - Version: 0.3
     RequiredApiVersion: 6.11.0
     ReleaseDate: 2024-12-01

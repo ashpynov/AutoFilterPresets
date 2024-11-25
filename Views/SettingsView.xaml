@@ -5,82 +5,140 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:c="clr-namespace:AutoFilterPresets.Converters"
              xmlns:m="clr-namespace:AutoFilterPresets.Models"
+             xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d"
-             d:DesignHeight="400" d:DesignWidth="600">
+             d:DesignHeight="400" d:DesignWidth="600"
+             >
     <UserControl.Resources>
         <c:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </UserControl.Resources>
     <TabControl>
         <TabItem Header="{DynamicResource LOC_AutoFilterSettings_General}">
-            <StackPanel Margin="20,20,20,20">
-                <TextBlock
-                    Text="{DynamicResource LOC_AutoFilterSettings_AutomaticFilters}"
-                    Margin="0,0,5,5"
-                />
-                <CheckBox
-                    Content="{DynamicResource LOC_AutoFilterSettings_CreateSources}"
-                    IsChecked="{Binding Settings.CreateSources}"
-                    Margin="5,5,5,5"
-                    HorizontalAlignment="Left"
-                />
-                <CheckBox
-                    Content="{DynamicResource LOC_AutoFilterSettings_CreatePlatforms}"
-                    IsChecked="{Binding Settings.CreatePlatforms}"
-                    Margin="5,5,5,5"
-                    HorizontalAlignment="Left"
-                />
-                <CheckBox
-                    Content="{DynamicResource LOC_AutoFilterSettings_FavoritesFirst}"
-                    IsChecked="{Binding Settings.FavoritesFirst}"
-                    Margin="5,5,5,5"
-                    HorizontalAlignment="Left"
-                />
-                <TextBlock
-                    Text="{DynamicResource LOC_AutoFilterSettings_BehaviorOptions}"
-                    Margin="0,15,5,5"
-                />
-                <CheckBox
-                    Content="{DynamicResource LOC_AutoFilterSettings_LoopSelection}"
-                    IsChecked="{Binding Settings.LoopSelection}"
-                    Margin="5,5,5,5"
-                    HorizontalAlignment="Left"
-                />
-                <CheckBox
-                    Content="{DynamicResource LOC_AutoFilterSettings_AltBringIntoView}"
-                    IsChecked="{Binding Settings.AltBringIntoView}"
-                    Margin="5,5,5,5"
-                    HorizontalAlignment="Left"
-                />
-                <TextBlock
-                    Text="{DynamicResource LOC_AutoFilterSettings_Sorting}"
-                    Margin="0,15,5,5"
-                />
-                <RadioButton
-                    Content="{DynamicResource LOC_AutoFilterSettings_Alphabet}"
-                    IsChecked="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Alphabet}}"
-                    Margin="5,5,5,5"
-                    GroupName="Order"
-                />
-                <RadioButton
-                    Content="{DynamicResource LOC_AutoFilterSettings_WithinGroups}"
-                    IsChecked="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.WithinGroups}}"
-                    Margin="5,5,5,5"
-                    GroupName="Order"
-                />
-                <RadioButton
-                    Content="{DynamicResource LOC_AutoFilterSettings_Custom}"
-                    IsChecked="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Custom}}"
-                    Margin="5,5,5,5"
-                    GroupName="Order"
-                    IsEnabled ="False"
-                />
-            </StackPanel>
-        </TabItem>
-        <TabItem
-            Header="{DynamicResource LOC_AutoFilterSettings_CustomOrder}"
-            IsEnabled="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Custom}}"
-        >
-
+            <Grid Margin="20,20,20,20" Width="800" HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="5*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel  Grid.Row="0" Grid.Column="0">
+                    <TextBlock
+                        Text="{DynamicResource LOC_AutoFilterSettings_AutomaticFilters}"
+                        Margin="0,0,5,5"
+                    />
+                    <CheckBox
+                        Content="{DynamicResource LOC_AutoFilterSettings_CreateSources}"
+                        IsChecked="{Binding Settings.CreateSources}"
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Left"
+                    />
+                    <CheckBox
+                        Content="{DynamicResource LOC_AutoFilterSettings_CreatePlatforms}"
+                        IsChecked="{Binding Settings.CreatePlatforms}"
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Left"
+                    />
+                    <CheckBox
+                        Content="{DynamicResource LOC_AutoFilterSettings_FavoritesFirst}"
+                        IsChecked="{Binding Settings.FavoritesFirst}"
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Left"
+                    />
+                    <TextBlock
+                        Text="{DynamicResource LOC_AutoFilterSettings_BehaviorOptions}"
+                        Margin="0,15,5,5"
+                    />
+                    <CheckBox
+                        Content="{DynamicResource LOC_AutoFilterSettings_LoopSelection}"
+                        IsChecked="{Binding Settings.LoopSelection}"
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Left"
+                    />
+                    <CheckBox
+                        Content="{DynamicResource LOC_AutoFilterSettings_AltBringIntoView}"
+                        IsChecked="{Binding Settings.AltBringIntoView}"
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Left"
+                    />
+                    <TextBlock
+                        Text="{DynamicResource LOC_AutoFilterSettings_Sorting}"
+                        Margin="0,15,5,5"
+                    />
+                    <RadioButton
+                        Content="{DynamicResource LOC_AutoFilterSettings_Alphabet}"
+                        IsChecked="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Alphabet}}"
+                        Margin="5,5,5,5"
+                        GroupName="Order"
+                    />
+                    <RadioButton
+                        Content="{DynamicResource LOC_AutoFilterSettings_WithinGroups}"
+                        IsChecked="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.WithinGroups}}"
+                        Margin="5,5,5,5"
+                        GroupName="Order"
+                    />
+                    <RadioButton
+                        Content="{DynamicResource LOC_AutoFilterSettings_Custom}"
+                        IsChecked="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Custom}}"
+                        Margin="5,5,5,5"
+                        GroupName="Order"
+                    />
+                </StackPanel>
+                <DockPanel
+                    Grid.Row="0" Grid.Column="1"
+                    VerticalAlignment="Top"
+                    MaxHeight="600"
+                    IsEnabled="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Custom}}">
+                    <TextBlock
+                        Text="{DynamicResource LOC_AutoFilterSettings_CustomOrder}"
+                        Margin="0,0,5,5"
+                        DockPanel.Dock="Top"
+                    />
+                    <TreeView
+                        Margin="5"
+                        Name="OrderTreeView"
+                        dd:DragDrop.IsDragSource="True"
+                        dd:DragDrop.IsDropTarget="True"
+                        dd:DragDrop.DropHandler="{Binding DropHandler}"
+                        ItemsSource="{Binding Settings.SortedItems}"
+                        MinHeight="400"
+                        DockPanel.Dock="Top"
+                        >
+                        <TreeView.Resources>
+                            <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                <Setter Property="Margin" Value="4,0,4,0" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                            <Style TargetType="ItemsPresenter">
+                                <Setter Property="Margin" Value="0,4,0,4"/>
+                            </Style>
+                        </TreeView.Resources>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Items}">
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+                                    <TextBlock Text="☰" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                    <TextBlock
+                                        Text="{Binding TranslatedName}"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontStyle" Value="Italic"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsFilter}" Value="True">
+                                                        <Setter Property="FontStyle" Value="Normal"/>
+                                                        <Setter Property="FontWeight" Value="Normal"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </DockPanel>
+            </Grid>
         </TabItem>
         <TabItem
             Header="{DynamicResource LOC_AutoFilterSettings_Aliases}"

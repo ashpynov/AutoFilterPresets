@@ -142,6 +142,11 @@ namespace AutoFilterPresets.Models
                 presets.Sort((x, y) => x.Name.CompareTo(y.Name));
             }
 
+            if (Settings.OrderBy == SortingOrder.Custom)
+            {
+                Settings.SortFilter(presets);
+            }
+
             AutoPresets = presets;
 
             UpdateFilterPresetSelector();
