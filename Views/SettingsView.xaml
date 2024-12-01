@@ -5,12 +5,324 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:c="clr-namespace:AutoFilterPresets.Converters"
              xmlns:m="clr-namespace:AutoFilterPresets.Models"
+             xmlns:v="clr-namespace:AutoFilterPresets.Views"
              xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600"
              >
     <UserControl.Resources>
+
         <c:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <c:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <c:BooleanToGridDefinitionConverter x:Key="BooleanToGridDefinitionConverter" />
+        <c:InvertedBooleanConverter x:Key="InvertedBooleanConverter" />
+
+        <!-- Define the style for the ToggleButton -->
+        <Style x:Key="ToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource GlyphBrush}" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource GlyphBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrushDark}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Define the template for ControlsPanel -->
+        <DataTemplate x:Key="ControlsPanelTemplate">
+            <GroupBox Header="{DynamicResource LOC_AutoFilterSettings_Collections}" Margin="5">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Column="0" Grid.Row="0"
+                        Margin="5,0,10,0"
+                        Text="{DynamicResource LOC_AutoFilterSettings_Compilation}"
+                        VerticalAlignment="Center" />
+                    <DockPanel Grid.Column="1" Grid.Row="0">
+                        <!-- Settings -->
+                        <ToggleButton
+                            DockPanel.Dock="Right"
+                            Name="SettingsButton"
+                            Margin="5,0,0,0"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_Settings}"
+                            Content="&#xefb0;" FontFamily="{StaticResource FontIcoFont}" FontSize="16" />
+                        <ComboBox
+                            x:Name="SelectedCompilation"
+                            SelectedItem="{Binding SelectedCompilation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ItemsSource="{Binding DataContext.GroupedCompilations, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <ComboBox.ItemContainerStyle>
+                                <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsGroup}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="FontStyle" Value="Italic"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsGroup}" Value="False">
+                                            <Setter Property="Margin" Value="30,0,0,0"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ComboBox.ItemContainerStyle>
+                        </ComboBox>
+                    </DockPanel>
+
+                    <DockPanel
+                        Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1"
+                        Margin="0,10,0,0"
+                        Visibility="Visible"
+                        LastChildFill="False">
+
+                        <!-- Save -->
+                        <Button
+                            Margin="5,0,0,0"
+                            DockPanel.Dock="Right"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_RevertAllChanges}"
+                            Content="&#xEC7F;" FontFamily="{StaticResource FontIcoFont}"
+                            Command="{Binding RevertAllChangesCommand}" />
+                        <!-- Revert -->
+                        <Button
+                            DockPanel.Dock="Right"
+                            Margin="20,0,0,0"
+                            Content="&#xEE00;" FontFamily="{StaticResource FontIcoFont}"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_SaveAllChanges}"
+                            Command="{Binding SaveAllChangesCommand}" />
+
+                    </DockPanel>
+                    <Grid
+                        Visibility="{Binding IsChecked, ElementName=SettingsButton, Converter={StaticResource BooleanToGridDefinitionConverter}, ConverterParameter=Visible:Collapsed}"
+                        Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                        Margin="0,0,0,-400">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1000*" MaxWidth="600" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            Grid.Column="1"
+                            Margin="0,5,0,0"
+                            BorderBrush="{DynamicResource PopupBorderBrush}"
+                            BorderThickness="1"
+                            VerticalAlignment="Top"
+                            Background="{DynamicResource WindowBackgourndBrush}"
+                            >
+                            <Grid Margin="10" VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20" />   <!-- 0. Header -->
+                                    <RowDefinition Height="Auto" /> <!-- 1. Name -->
+                                    <RowDefinition Height="Auto" /> <!-- 2. Path -->
+                                    <RowDefinition Height="Auto" /> <!-- 3. Images -->
+                                    <RowDefinition Height="Auto" /> <!-- 4. Backgrounds -->
+                                    <RowDefinition Height="Auto" /> <!-- 5. Footer -->
+                                </Grid.RowDefinitions>
+                                <ToggleButton
+                                    Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Right"
+                                    IsChecked="{Binding IsChecked, ElementName=SettingsButton, Mode=TwoWay, Converter={StaticResource InvertedBooleanConverter}}"
+                                    Background="Transparent"
+                                    Margin="0,-3,0,0"
+                                    Content="r" FontFamily="Marlett"
+                                    BorderThickness="0"
+                                    Padding="0"/>
+                                <DockPanel
+                                    Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2"
+                                    LastChildFill="False"
+                                    Margin="0,20,0,0"
+                                >
+                                    <!-- Add -->
+                                    <Button
+                                        Margin="0,0,5,0"
+                                        DockPanel.Dock="Left"
+                                        ToolTip="{DynamicResource LOC_AutoFilterSettings_AddCompilation}"
+                                        Content="&#xefc2;" FontFamily="{StaticResource FontIcoFont}"
+                                        Command="{Binding AddCompilationCommand}" />
+                                    <!-- Delete -->
+                                    <Button
+                                        Margin="0,0,5,0"
+                                        DockPanel.Dock="Left"
+                                        Content="&#xEC53;" FontFamily="{StaticResource FontIcoFont}"
+                                        ToolTip="{DynamicResource LOCRemoveTitle}"
+                                        Command="{Binding DeleteCompilationCommand}" />
+
+                                </DockPanel>
+                                <TextBlock
+                                    Grid.Column="0" Grid.Row="1"
+                                    Margin="0,5,10,5"
+                                    Text="{DynamicResource LOC_AutoFilterSettings_Name}"
+                                    VerticalAlignment="Center" />
+                                <DockPanel
+                                    Grid.Column="1" Grid.Row="1"
+                                    Margin="0,5,0,5">
+                                    <TextBox
+                                        x:Name="CollectionName"
+                                        Height="28"
+                                        IsReadOnly="{Binding SelectedCompilation.IsTheme}"
+                                        Loaded="FolderTB_ScrolltoEnd"
+                                        TextChanged="FolderTB_ScrolltoEnd"
+                                        LostFocus="FolderTB_ScrolltoEnd"
+                                        Text="{Binding SelectedCompilation.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                                <TextBlock
+                                    Grid.Column="0" Grid.Row="2"
+                                    Margin="0,5,10,5"
+                                    Text="{DynamicResource LOC_AutoFilterSettings_Path}"
+                                    VerticalAlignment="Center" />
+                                <DockPanel
+                                    Grid.Column="1" Grid.Row="2"
+                                    Margin="0,5,0,5">
+                                    <Button
+                                        Margin="5,0,0,0"
+                                        DockPanel.Dock="Right"
+                                        IsEnabled="{Binding SelectedCompilation.IsTheme, Converter={StaticResource InvertedBooleanConverter}}"
+                                        Content="&#xEC5B;" FontFamily="{StaticResource FontIcoFont}" FontSize="16"
+                                        ToolTip="{DynamicResource LOC_AutoFilterSettings_SelectRootFolder}"
+                                        Command="{Binding SelectRootFolderCommand}" />
+                                    <TextBox
+                                        x:Name="RootFolder"
+                                        Height="28"
+                                        IsReadOnly="{Binding SelectedCompilation.IsTheme}"
+                                        Loaded="FolderTB_ScrolltoEnd"
+                                        TextChanged="FolderTB_ScrolltoEnd"
+                                        LostFocus="FolderTB_ScrolltoEnd"
+                                        Text="{Binding CompilationRootFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                                <TextBlock
+                                    Grid.Column="0" Grid.Row="3"
+                                    Margin="0,5,10,5"
+                                    Text="{DynamicResource LOC_AutoFilterSettings_Images}"
+                                    VerticalAlignment="Center" />
+                                <DockPanel
+                                    Grid.Column="1" Grid.Row="3"
+                                    Margin="0,5,0,5">
+                                    <Button
+                                        Margin="5,0,0,0"
+                                        DockPanel.Dock="Right"
+                                        Content="&#xEC5B;" FontFamily="{StaticResource FontIcoFont}" FontSize="16"
+                                        ToolTip="{DynamicResource LOC_AutoFilterSettings_SelectImagesFolder}"
+                                        Command="{Binding SelectImagesFolderCommand}" />
+                                    <TextBox
+                                        x:Name="ImagesFolder"
+                                        Height="28"
+                                        Loaded="FolderTB_ScrolltoEnd"
+                                        TextChanged="FolderTB_ScrolltoEnd"
+                                        LostFocus="FolderTB_ScrolltoEnd"
+                                        Text="{Binding CompilationImagesFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                                <TextBlock
+                                    Grid.Column="0" Grid.Row="4"
+                                    Margin="0,0,10,0"
+                                    Text="{DynamicResource LOC_AutoFilterSettings_Backgrounds}"
+                                    VerticalAlignment="Center" />
+                                <DockPanel
+                                    Grid.Column="1" Grid.Row="4"
+                                    Margin="0,5,0,0">
+                                    <Button
+                                        Margin="5,0,0,0"
+                                        DockPanel.Dock="Right"
+                                        Content="&#xEC5B;" FontFamily="{StaticResource FontIcoFont}" FontSize="16"
+                                        ToolTip="{DynamicResource LOC_AutoFilterSettings_SelectBackgroundsFolder}"
+                                        Command="{Binding SelectBackgroundsFolderCommand}" />
+                                    <TextBox
+                                        x:Name="BackgroundsFolder"
+                                        Height="28"
+                                        Loaded="FolderTB_ScrolltoEnd"
+                                        TextChanged="FolderTB_ScrolltoEnd"
+                                        LostFocus="FolderTB_ScrolltoEnd"
+                                        Text="{Binding CompilationBackgroundsFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+        </DataTemplate>
+
+        <!-- Define the template for SelectImage -->
+        <DataTemplate x:Key="SelectImageTemplate">
+            <GroupBox Header="{DynamicResource LOCSelectImageTitle}" Margin="5">
+                <Grid>
+                    <Image
+                        Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant" DockPanel.Dock="Top"
+                        Source="{Binding SelectedfilterImages.Image, Mode=OneWay, Converter={StaticResource ImageStringToImageConverterCached}}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Button
+                            Margin="5"
+                            Content="&#xefc2;" FontFamily="{StaticResource FontIcoFont}"
+                            ToolTip="{DynamicResource LOCSelectImageTitle}"
+                            Command="{Binding SelectFilterImageCommand}"
+                            CommandParameter="{Binding SelectedfilterImages}" />
+                        <Button
+                            Margin="5"
+                            Content="&#xEC53;" FontFamily="{StaticResource FontIcoFont}"
+                            ToolTip="{DynamicResource LOCRemoveTitle}"
+                            Command="{Binding RemoveFilterImageCommand}"
+                            CommandParameter="{Binding SelectedfilterImages}" />
+                        <Button
+                            Margin="5"
+                            Command="{Binding RevertFilterImageCommand}"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_Revert}"
+                            Content="&#xEC7F;" FontFamily="{StaticResource FontIcoFont}"
+                            CommandParameter="{Binding SelectedfilterImages}" />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+        </DataTemplate>
+
+        <!-- Define the template for SelectBackground -->
+        <DataTemplate x:Key="SelectBackgroundTemplate">
+            <GroupBox Header="{DynamicResource LOCSelectBackgroundTitle}" Margin="5">
+                <Grid>
+                    <Image
+                        Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant" DockPanel.Dock="Top"
+                        Source="{Binding SelectedfilterImages.Background, Mode=OneWay, Converter={StaticResource ImageStringToImageConverterCached}}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Button
+                            Margin="5"
+                            Content="&#xefc2;" FontFamily="{StaticResource FontIcoFont}"
+                            ToolTip="{DynamicResource LOCSelectBackgroundTitle}"
+                            Command="{Binding SelectFilterBackgroundCommand}"
+                            CommandParameter="{Binding SelectedfilterImages}" />
+                        <Button
+                            Margin="5"
+                            Content="&#xEC53;" FontFamily="{StaticResource FontIcoFont}"
+                            ToolTip="{DynamicResource LOCRemoveTitle}"
+                            Command="{Binding RemoveFilterBackgroundCommand}"
+                            CommandParameter="{Binding SelectedfilterImages}" />
+                        <Button
+                            Margin="5"
+                            Command="{Binding RevertFilterBackgroundCommand}"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_Revert}"
+                            Content="&#xEC7F;" FontFamily="{StaticResource FontIcoFont}"
+                            CommandParameter="{Binding SelectedfilterImages}" />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+        </DataTemplate>
+
     </UserControl.Resources>
     <TabControl>
         <TabItem Header="{DynamicResource LOC_AutoFilterSettings_General}">
@@ -138,6 +450,207 @@
                         </TreeView.ItemTemplate>
                     </TreeView>
                 </DockPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Name="TabCustomize"
+            Header="{DynamicResource LOC_AutoFilterSettings_Customize}"
+            IsEnabled ="True"
+        >
+            <Grid Margin="20,20,20,20" MinWidth="600">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300*" MaxWidth="500" MinWidth="200" />
+                    <ColumnDefinition MaxWidth="850" Width="600*" />
+                    <ColumnDefinition Width="{Binding IsChecked, ElementName=SyncCompilationEnable, Converter={StaticResource BooleanToGridDefinitionConverter}, ConverterParameter=Auto:0}"/>
+                    <ColumnDefinition MaxWidth="850" Width="{Binding IsChecked, ElementName=SyncCompilationEnable, Converter={StaticResource BooleanToGridDefinitionConverter}, ConverterParameter=600*:0}" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Margin="5"
+                >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <GroupBox
+                        Grid.Row="0"
+                        Header="{DynamicResource LOC_AutoFilterSettings_Filters}" >
+                        <TreeView
+                            Name="FiltersTreeView"
+                            dd:DragDrop.IsDragSource="True"
+                            dd:DragDrop.IsDropTarget="True"
+                            dd:DragDrop.DropHandler="{Binding DropHandler}"
+                            ItemsSource="{Binding Settings.SortedItems}"
+                            SelectedItemChanged="TreeView_SelectedItemChanged"
+                            DockPanel.Dock="Top"
+                            BorderThickness="0"
+                            >
+                            <TreeView.Resources>
+                                <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                    <Setter Property="Margin" Value="4,0,4,0" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="IsExpanded" Value="True" />
+                                </Style>
+                                <Style TargetType="ItemsPresenter">
+                                    <Setter Property="Margin" Value="0,4,0,4"/>
+                                </Style>
+                            </TreeView.Resources>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Items}">
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+                                        <TextBlock Text="☰" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                        <TextBlock
+                                            Text="{Binding TranslatedName}"
+                                            VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontStyle" Value="Italic"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsFilter}" Value="True">
+                                                            <Setter Property="FontStyle" Value="Normal"/>
+                                                            <Setter Property="FontWeight" Value="Normal"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </GroupBox>
+
+                </Grid>
+
+                <ContentControl
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Content="{Binding PrimaryCollection}"
+                    ContentTemplate="{StaticResource SelectImageTemplate}"
+                />
+                <ContentControl
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Content="{Binding PrimaryCollection}"
+                    ContentTemplate="{StaticResource SelectBackgroundTemplate}"
+                />
+                <ContentControl
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Content="{Binding SecondaryCollection}"
+                    ContentTemplate="{StaticResource SelectImageTemplate}"
+                />
+                <ContentControl
+                    Grid.Row="2"
+                    Grid.Column="3"
+                    Content="{Binding SecondaryCollection}"
+                    ContentTemplate="{StaticResource SelectBackgroundTemplate}"
+                />
+
+                <StackPanel Name="CompilationSync" Orientation="Vertical" Margin="0,42,0,5" Grid.Row="0" Grid.Column="2" VerticalAlignment="Top">
+                    <StackPanel Orientation="Horizontal" Height="29" Margin="0,5,0,5" >
+                        <Button
+                            Content="&#xea97;" FontFamily="{StaticResource FontIcoFont}"  FontSize="20"
+                            Margin="0,0,1,0" Padding="0" Width="30"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyFullCompilation}"
+                            Command="{Binding CopyCompilationFullToLeftCommand}"/>
+                        <Button
+                            Content="&#xea98;" FontFamily="{StaticResource FontIcoFont}" FontSize="20"
+                            Margin="1,0,0,0" Padding="0" Width="30"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyFullCompilation}"
+                            Command="{Binding CopyCompilationFullToRightCommand}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="29" Margin="0,5,0,5">
+                        <Button
+                            Content="&#xea9d;" FontFamily="{StaticResource FontIcoFont}" FontSize="18"
+                            Margin="0,0,1,0" Padding="0" Width="30"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyMissingCompilation}"
+                            Command="{Binding CopyCompilationToLeftCommand}"/>
+                        <Button
+                            Content="&#xeaa0;" FontFamily="{StaticResource FontIcoFont}" FontSize="18"
+                            Margin="1,0,0,0" Padding="0" Width="30"
+                            ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyMissingCompilation}"
+                            Command="{Binding CopyCompilationToRightCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Height="29" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
+                    <Button
+                        Content="&#xea9d;" FontFamily="{StaticResource FontIcoFont}"  FontSize="18"
+                        Margin="0,0,1,0" Padding="0" Width="30"
+                        ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyImageFromCompilation}"
+                        Command="{Binding CopyImageToLeftCommand}"
+                        CommandParameter="{Binding SelectedItem, ElementName=FiltersTreeView}"/>
+
+                    <Button
+                        Content="&#xeaa0;" FontFamily="{StaticResource FontIcoFont}" FontSize="18"
+                        Margin="1,0,0,0" Padding="0" Width="30"
+                        ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyImageFromCompilation}"
+                        Command="{Binding CopyImageToRightCommand}"
+                        CommandParameter="{Binding SelectedItem, ElementName=FiltersTreeView}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Height="29" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" >
+                    <Button
+                        Content="&#xea9d;" FontFamily="{StaticResource FontIcoFont}"  FontSize="18"
+                        Margin="0,0,1,0" Padding="0" Width="30"
+                        ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyImageFromCompilation}"
+                        Command="{Binding CopyBackgroundToLeftCommand}"
+                        CommandParameter="{Binding SelectedItem, ElementName=FiltersTreeView}"/>
+
+                    <Button
+                        Content="&#xeaa0;" FontFamily="{StaticResource FontIcoFont}" FontSize="18"
+                        Margin="1,0,0,0" Padding="0" Width="30"
+                        ToolTip="{DynamicResource LOC_AutoFilterSettings_CopyImageFromCompilation}"
+                        Command="{Binding CopyBackgroundToRightCommand}"
+                        CommandParameter="{Binding SelectedItem, ElementName=FiltersTreeView}"/>
+                </StackPanel>
+                <ContentControl
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Content="{Binding PrimaryCollection}"
+                    ContentTemplate="{StaticResource ControlsPanelTemplate}"
+                />
+                <ContentControl
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Content="{Binding SecondaryCollection}"
+                    ContentTemplate="{StaticResource ControlsPanelTemplate}"
+                />
+                 <ToggleButton
+                    DockPanel.Dock="Right"
+                    x:Name="SyncCompilationEnable"
+                    Content="&#xef18;"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalAlignment = "Right"
+                    VerticalAlignment = "Top"
+                    Height="32"
+                    Width="40"
+                    FontFamily="{StaticResource FontIcoFont}"
+                    FontSize="16"
+                    IsChecked="{Binding SyncCompilationIsEnabled, Mode=TwoWay}" >
+                    <ToggleButton.Style>
+                        <Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleButtonStyle}">
+                            <Setter Property="Margin" Value="5" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Margin" Value="0,5,-51,0" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
             </Grid>
         </TabItem>
         <TabItem

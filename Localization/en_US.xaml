@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:String x:Key="LOC_AutoFilterSettings_General">General</sys:String>
-
+    <sys:String x:Key="LOC_AutoFilterSettings_Customize">Customize</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_Aliases">Aliases</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_BlackList">Black List</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_AutomaticFilters">Automatic filters:</sys:String>
@@ -23,5 +23,42 @@
     <sys:String x:Key="LOC_AutoFilterSettings_PRESETS">PRESETS</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_SOURCES">SOURCES</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_PLATFORMS">PLATFORMS</sys:String>
+
+
+
+    <sys:String x:Key="LOC_AutoFilterSettings_Filters">Filters:</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_Collections">Collection</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_FilterImage">Image</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_FilterBackground">Background</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_BrowseButton">Browse</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_RemoveButton">Remove</sys:String>
+
+
+    <sys:String x:Key="LOC_AutoFilterSettings_Settings">Manage compilations</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Revert">Revert Changes</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SyncCompilation">Sync collections</sys:String>
+
+
+    <sys:String x:Key="LOC_AutoFilterSettings_CopyFullCompilation">Copy everything</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_CopyMissingCompilation">Copy only missing images</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_CopyImage">Copy image </sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_CopyBackground">Copy background</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_RevertAllChanges">Revert all changes</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SaveAllChanges">Save changes</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_AddCompilation">Add new compilation</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_Compilation">Theme or Compilation:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Name">Name:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Path">Path:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Images">Images:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Backgrounds">Backgrounds:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SelectRootFolder">Select root folder for compilation</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SelectImagesFolder">Select folder with filter images</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SelectBackgroundsFolder">Select folder with filter background images</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationCaption">Replace filter images files</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationText" xml:space="preserve">You are to replace filter images files in destintion folders.&#x0d;&#x0a;&#x0d;&#x0a;It can not be undone. Continue?</sys:String>
 
 </ResourceDictionary>

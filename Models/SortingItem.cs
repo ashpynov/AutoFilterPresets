@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Resources;
 using Playnite.SDK;
@@ -16,7 +18,7 @@ namespace AutoFilterPresets.Models
         Platform,
         Platforms,
     }
-    public class SortingItem
+    public class SortingItem : ObservableObject
     {
         public string Name { get; set; }
         public SortingItemType SortingType { get; set; }
@@ -43,5 +45,32 @@ namespace AutoFilterPresets.Models
         {
             get => new[] { SortingItemType.Presets, SortingItemType.Sources, SortingItemType.Platforms }.Contains(SortingType) == false;
         }
+
+        private string imagePath;
+        [DontSerialize]
+        public string ImagesPath { get => imagePath; set => SetValue(ref imagePath, value); }
+
+        private string compilationImagesPath;
+        [DontSerialize]
+        public string CompilationImagesPath { get => compilationImagesPath; set => SetValue(ref compilationImagesPath, value); }
+
+        private string backgroundsPath;
+        [DontSerialize]
+        public string BackgroundsPath  { get => backgroundsPath; set => SetValue(ref backgroundsPath, value); }
+
+        private string compilationBackgroundsPath;
+        [DontSerialize]
+        public string CompilationBackgroundsPath { get => compilationBackgroundsPath; set => SetValue(ref compilationBackgroundsPath, value); }
+
+        [DontSerialize]
+        public bool ImagesPathIsChanged = false;
+
+        [DontSerialize]
+        public bool BackgroundsPathIsChanged = false;
+        [DontSerialize]
+        public bool CompilationImagesPathIsChanged = false;
+
+        [DontSerialize]
+        public bool CompilationBackgroundsPathIsChanged = false;
     }
 }

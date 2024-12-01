@@ -1,4 +1,4 @@
-﻿using GongSolutions.Wpf.DragDrop;
+using GongSolutions.Wpf.DragDrop;
 using GongSolutions.Wpf.DragDrop.Utilities;
 using Playnite.SDK;
 using Playnite.SDK.Data;
@@ -6,6 +6,7 @@ using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
@@ -46,6 +47,14 @@ namespace AutoFilterPresets.Models
 
         private ObservableCollection<SortingItem> sortedItems = new ObservableCollection<SortingItem>();
         public ObservableCollection<SortingItem> SortedItems { get => sortedItems; set => SetValue(ref sortedItems, value); }
+
+        private SortingItem selectedFilter;
+
+        private List<Compilation> compilations;
+        public List<Compilation> Compilations { get => compilations; set => SetValue(ref compilations, value); }
+
+        [DontSerialize]
+        public SortingItem SelectedFilter { get => selectedFilter; set => SetValue(ref selectedFilter, value); }
 
         [DontSerialize]
         public static readonly ObservableCollection<SortingItem> defaultSortedItems = new ObservableCollection<SortingItem>()
@@ -152,79 +161,21 @@ namespace AutoFilterPresets.Models
                 return a_order - b_order;
             });
         }
-    }
 
-    public class SettingsViewModel : ObservableObject, ISettings
-    {
-        public OrderDropHandler DropHandler { get; }
-
-        private readonly AutoFilterPresets plugin;
-        public static IPlayniteAPI PlayniteAPI;
-        private AutoFilterPresetsSettings editingClone { get; set; }
-
-        private AutoFilterPresetsSettings settings;
-        public AutoFilterPresetsSettings Settings
-        {
-            get => settings;
-            set
+        [DontSerialize]
+        public IEnumerable<SortingItem> FilterList
+        => SortedItems.SelectMany(x =>
             {
-                settings = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public SettingsViewModel(AutoFilterPresets plugin, IPlayniteAPI PlayniteAPI)
-        {
-            // Injecting your plugin instance is required for Save/Load method because Playnite saves data to a location based on what plugin requested the operation.
-            this.plugin = plugin;
-            SettingsViewModel.PlayniteAPI = PlayniteAPI;
-
-
-            // Load saved settings.
-            var savedSettings = plugin.LoadPluginSettings<AutoFilterPresetsSettings>();
-
-            // LoadPluginSettings returns null if no saved data is available.
-            if (savedSettings != null)
-            {
-                Settings = savedSettings;
-            }
-            else
-            {
-                Settings = new AutoFilterPresetsSettings();
-            }
-
-            DropHandler = new OrderDropHandler();
-         }
-
-        public void BeginEdit()
-        {
-            // Code executed when settings view is opened and user starts editing values.
-            Settings.AddMissingSortingItems();
-            editingClone = Serialization.GetClone(Settings);
-        }
-
-        public void CancelEdit()
-        {
-            // Code executed when user decides to cancel any changes made since BeginEdit was called.
-            // This method should revert any changes made to Option1 and Option2.
-            Settings = editingClone;
-        }
-
-        public void EndEdit()
-        {
-            // Code executed when user decides to confirm changes made since BeginEdit was called.
-            // This method should save settings made to Option1 and Option2.
-            plugin.SavePluginSettings(Settings);
-        }
-
-        public bool VerifySettings(out List<string> errors)
-        {
-            // Code execute when user decides to confirm changes made since BeginEdit was called.
-            // Executed before EndEdit is called and EndEdit is not called if false is returned.
-            // List of errors is presented to user if verification fails.
-            errors = new List<string>();
-            return true;
-        }
-
+                var res = new List<SortingItem>();
+                if (!x.IsGroup)
+                {
+                    res.Add(x);
+                }
+                if (x.Items?.Count > 0)
+                {
+                    res.AddRange(x.Items);
+                }
+                return res;
+            } );
     }
 }
