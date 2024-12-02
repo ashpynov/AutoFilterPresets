@@ -17,7 +17,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public enum SortingOrder
     {
@@ -25,7 +25,7 @@ namespace AutoFilterPresets.Models
         WithinGroups = 1,
         Custom = 2
     }
-    public class AutoFilterPresetsSettings : ObservableObject
+    public class SettingsModel : ObservableObject
     {
         private bool createSources = true;
         public bool CreateSources { get => createSources; set => SetValue(ref createSources, value); }
@@ -45,13 +45,47 @@ namespace AutoFilterPresets.Models
         private SortingOrder orderBy = SortingOrder.Alphabet;
         public SortingOrder OrderBy { get => orderBy; set => SetValue(ref orderBy, value);}
 
+
+        private bool? dontConfirmCopy = null;
+        private bool dontDoubleAsk = false;
+        public bool DontConfirmCopy
+        {
+            get => dontConfirmCopy == true;
+            set
+            {
+                if (!dontConfirmCopy.HasValue)
+                {
+                    SetValue(ref dontConfirmCopy, value);
+                }
+                else
+                {
+                    dontDoubleAsk |= dontConfirmCopy == true;
+                    if (value == true && !dontDoubleAsk)
+                    {
+                        var options = new List<MessageBoxOption>
+                    {
+                        new MessageBoxOption("LOC_AutoFilterSettings_DontConfirnButton", false),
+                        new MessageBoxOption("LOC_AutoFilterSettings_ConfirmationCancel", true, true)
+                    };
+
+                        dontDoubleAsk = SettingsViewModel.PlayniteAPI.Dialogs.ShowMessage(
+                            ResourceProvider.GetString("LOC_AutoFilterSettings_DontConfirnWarn"),
+                            ResourceProvider.GetString("LOC_AutoFilterSettings_DontConfirnTitle"),
+                            MessageBoxImage.Warning,
+                            options) == options[0];
+                    }
+                    SetValue(ref dontConfirmCopy, dontDoubleAsk && value);
+                }
+            }
+        }
+
         private ObservableCollection<SortingItem> sortedItems = new ObservableCollection<SortingItem>();
         public ObservableCollection<SortingItem> SortedItems { get => sortedItems; set => SetValue(ref sortedItems, value); }
 
         private SortingItem selectedFilter;
 
-        private List<Compilation> compilations;
-        public List<Compilation> Compilations { get => compilations; set => SetValue(ref compilations, value); }
+        private List<CompilationModel> compilations;
+        public List<CompilationModel> Compilations { get => compilations; set => SetValue(ref compilations, value); }
 
         [DontSerialize]
         public SortingItem SelectedFilter { get => selectedFilter; set => SetValue(ref selectedFilter, value); }
@@ -114,7 +148,7 @@ namespace AutoFilterPresets.Models
         public void AddMissingSortingItems()
         {
             var saved = SortedItems.ToList();
-            foreach (var sortingGroup in AutoFilterPresetsSettings.defaultSortedItems)
+            foreach (var sortingGroup in SettingsModel.defaultSortedItems)
             {
                 var group = saved.FirstOrDefault(x => x.SortingType == sortingGroup.SortingType);
                 if (group == null)

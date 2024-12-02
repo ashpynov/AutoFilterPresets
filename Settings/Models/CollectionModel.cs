@@ -1,31 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using Playnite.SDK;
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public class CollectionModel : ObservableObject
     {
         private readonly IPlayniteAPI PlayniteAPI;
 
-        private readonly SettingsViewModel SettingsModel;
-        private readonly AutoFilterPresetsSettings Settings;
+        private readonly SettingsViewModel SettingsView;
+        private readonly SettingsModel Settings;
 
         public readonly List<FilterImages> ImagesCollection = new List<FilterImages>();
 
         private FilterImages selectedFilterImages;
         public FilterImages SelectedfilterImages {get => selectedFilterImages;  set => SetValue( ref selectedFilterImages, value ); }
 
-        public CollectionModel(IPlayniteAPI PlayniteAPI, SettingsViewModel SettingsModel)
+        public CollectionModel(IPlayniteAPI PlayniteAPI, SettingsViewModel SettingsView)
         {
             this.PlayniteAPI = PlayniteAPI;
-            this.SettingsModel = SettingsModel;
+            this.SettingsView = SettingsView;
 
-            Settings = SettingsModel.Settings;
+            Settings = SettingsView.Settings;
             Settings.PropertyChanged += OnSettingsPropertyChanged;
 
             LoadImagesCollection(true);
@@ -33,7 +34,7 @@ namespace AutoFilterPresets.Models
 
         void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(AutoFilterPresetsSettings.SelectedFilter))
+            if (e.PropertyName == nameof(Settings.SelectedFilter))
             {
                 SetSelectedFilterImages(Settings.SelectedFilter?.Name);
             }
@@ -68,8 +69,8 @@ namespace AutoFilterPresets.Models
             SelectedfilterImages = string.IsNullOrEmpty(FilterName) ? null : ImagesCollection.FirstOrDefault( i => i.Name.ToLower() == FilterName.ToLower());
         }
 
-        private Compilation selectedCompilation;
-        public Compilation SelectedCompilation
+        private CompilationModel selectedCompilation;
+        public CompilationModel SelectedCompilation
         {
             get => selectedCompilation;
             set
@@ -89,7 +90,7 @@ namespace AutoFilterPresets.Models
             {
                 compilationBackgroundsFolder = value;
                 var path = compilationBackgroundsFolder;
-                if (SelectedCompilation is Compilation compilation && (string.IsNullOrEmpty(path) || (path = compilation.GetCompilationRelativePath(path)) is string))
+                if (SelectedCompilation is CompilationModel compilation && (string.IsNullOrEmpty(path) || (path = compilation.GetCompilationRelativePath(path)) is string))
                 {
                     compilation.FilterBackgroundsFolder = compilationBackgroundsFolder = path;
                     LoadCompilationBackgrounds();
@@ -107,7 +108,7 @@ namespace AutoFilterPresets.Models
             {
                 compilationRootFolder = value;
                 var path = compilationRootFolder;
-                if (SelectedCompilation is Compilation compilation && compilation.Path?.ToLower() != path?.ToLower() && (string.IsNullOrEmpty(path) || Directory.Exists(path)))
+                if (SelectedCompilation is CompilationModel compilation && compilation.Path?.ToLower() != path?.ToLower() && (string.IsNullOrEmpty(path) || Directory.Exists(path)))
                 {
                     var images = compilation.GetCompilationFullPath(compilation.FilterImagesFolder);
                     var backgrounds = compilation.GetCompilationFullPath(compilation.FilterBackgroundsFolder);
@@ -130,7 +131,7 @@ namespace AutoFilterPresets.Models
             {
                 compilationImagesFolder = value;
                 var path = compilationImagesFolder;
-                if (SelectedCompilation is Compilation compilation && (string.IsNullOrEmpty(path) || (path = compilation.GetCompilationRelativePath(path)) is string))
+                if (SelectedCompilation is CompilationModel compilation && (string.IsNullOrEmpty(path) || (path = compilation.GetCompilationRelativePath(path)) is string))
                 {
                     compilation.FilterImagesFolder = compilationImagesFolder = path;
                     LoadCompilationImages();
@@ -207,15 +208,15 @@ namespace AutoFilterPresets.Models
                 do
                 {
                     name = $"{SelectedCompilation?.Name} ({id++})";
-                } while (SettingsModel.Compilations.FirstOrDefault(c => c.Name == name) != null);
+                } while (SettingsView.Compilations.FirstOrDefault(c => c.Name == name) != null);
 
-                var compilation = new Compilation(Guid.NewGuid().ToString(), null, null)
+                var compilation = new CompilationModel(Guid.NewGuid().ToString(), null, null)
                 {
                     Name = name
                 };
-                SettingsModel.Compilations.Add(compilation);
-                SettingsModel.OnPropertyChanged(nameof(SettingsModel.Compilations));
-                SettingsModel.OnPropertyChanged(nameof(SettingsModel.GroupedCompilations));
+                SettingsView.Compilations.Add(compilation);
+                SettingsView.OnPropertyChanged(nameof(SettingsView.Compilations));
+                SettingsView.OnPropertyChanged(nameof(SettingsView.GroupedCompilations));
 
                 SelectedCompilation = compilation;
 
@@ -226,15 +227,15 @@ namespace AutoFilterPresets.Models
         public RelayCommand DeleteCompilationCommand => new RelayCommand(
             () =>
             {
-                var index = SettingsModel.Compilations.IndexOf(SelectedCompilation);
-                SettingsModel.Compilations.RemoveAt(index);
-                if (SettingsModel.Compilations.Count > 0)
+                var index = SettingsView.Compilations.IndexOf(SelectedCompilation);
+                SettingsView.Compilations.RemoveAt(index);
+                if (SettingsView.Compilations.Count > 0)
                 {
-                    SelectedCompilation = SettingsModel.Compilations[Math.Min(index, SettingsModel.Compilations.Count - 1)];
+                    SelectedCompilation = SettingsView.Compilations[Math.Min(index, SettingsView.Compilations.Count - 1)];
                 }
 
-                SettingsModel.OnPropertyChanged(nameof(SettingsModel.Compilations));
-                SettingsModel.OnPropertyChanged(nameof(SettingsModel.GroupedCompilations));
+                SettingsView.OnPropertyChanged(nameof(SettingsView.Compilations));
+                SettingsView.OnPropertyChanged(nameof(SettingsView.GroupedCompilations));
             },
             () => SelectedCompilation != null && SelectedCompilation.IsTheme == false && SelectedCompilation.IsGroup == false
         );
@@ -264,31 +265,96 @@ namespace AutoFilterPresets.Models
             () => !CompilationChanged
         );
 
-        public RelayCommand RevertAllChangesCommand => new RelayCommand(
-            () =>
+        public void RevertChanges()
+        {
+            foreach (var x in ImagesCollection)
             {
-                foreach (var x in ImagesCollection)
-                {
-                    x.Image = x.OriginalImage;
-                    x.Background = x.OriginalBackground;
-                }
-                OnFilesChanged();
-            },
+                x.Image = x.OriginalImage;
+                x.Background = x.OriginalBackground;
+            }
+            OnFilesChanged();
+        }
+
+        public RelayCommand RevertAllChangesCommand
+        => new RelayCommand(
+            () => RevertChanges(),
             () => CompilationChanged
         );
 
 
         public void SaveImages()
         {
+            var imagesFolder = SelectedCompilation.GetCompilationFullPath(SelectedCompilation.FilterImagesFolder);
+            var backgroundsFolder = SelectedCompilation.GetCompilationFullPath(SelectedCompilation.FilterImagesFolder);
 
+            var images = ImagesCollection
+                .Where(i => i.Image != i.OriginalImage)
+                .Select(i => new Tuple<string,string>( i.Image, i.OriginalImage ?? Path.Combine(imagesFolder, $"{i.Name}.png")))
+                .ToList();
+
+            images.AddRange( ImagesCollection
+                .Where(i => i.Background != i.OriginalBackground)
+                .Select(i => new Tuple<string,string>( i.Background, i.OriginalBackground ?? Path.Combine(backgroundsFolder, $"{i.Name}.jpg")))
+                .ToList());
+
+            var copyToTemp = new List<Tuple<string, string>>();
+            var copyToTarget = new List<Tuple<string, string>>();
+            var toDelete = new List<string>();
+
+            var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+            foreach (var image in images)
+            {
+                var hasConflict = images.Select(i => i.Item2).Contains(image.Item1);
+                if (hasConflict)
+                {
+                    var tempFileName = Path.Combine(tempDir, Path.GetRandomFileName() + Path.GetExtension(image.Item2) ?? "");
+                    copyToTemp.Add(new Tuple<string, string>(image.Item1, tempFileName));
+                    copyToTarget.Add(new Tuple<string, string>(tempFileName, image.Item2));
+                }
+                else if (image.Item1 == null)
+                {
+                    toDelete.Add(image.Item2);
+                }
+                else
+                {
+                    copyToTarget.Add(image);
+                }
+            }
+
+            if (copyToTemp.Count > 0)
+            {
+                Directory.CreateDirectory(tempDir);
+                foreach (var image in copyToTemp)
+                {
+                    File.Copy(image.Item1, image.Item2);
+                }
+            }
+
+            foreach(var delete in toDelete)
+            {
+                File.Delete(delete);
+            }
+
+            foreach (var image in copyToTarget)
+            {
+                File.Copy(image.Item1, image.Item2);
+            }
+
+            if (copyToTemp.Count > 0)
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+
+            LoadCompilationImages();
+            LoadCompilationBackgrounds();
         }
-        public RelayCommand SaveAllChangesCommand => new RelayCommand(
+
+        public RelayCommand SaveAllChangesCommand
+        => new RelayCommand(
             () =>
             {
-                if (PlayniteAPI.Dialogs.ShowMessage(
-                    ResourceProvider.GetString("LOC_AutoFilterSettings_ConfirmationText"),
-                    ResourceProvider.GetString("LOC_AutoFilterSettings_ConfirmationCaption"),
-                    MessageBoxButton.OKCancel) == MessageBoxResult.OK )
+                if (SettingsView.ImageSaveConfirmationDialog( withRevert:false ) == ConfirmationResult.Save)
                 {
                     SaveImages();
                 }

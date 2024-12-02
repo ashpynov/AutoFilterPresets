@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
-using AutoFilterPresets.Models;
+using AutoFilterPresets.Setings.Models;
 
 
-namespace AutoFilterPresets.Views
+namespace AutoFilterPresets.Settings.Views
 {
     public partial class SettingsView : UserControl
     {

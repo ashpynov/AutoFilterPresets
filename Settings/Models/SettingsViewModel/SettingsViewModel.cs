@@ -1,26 +1,23 @@
-﻿using GongSolutions.Wpf.DragDrop;
-using GongSolutions.Wpf.DragDrop.Utilities;
-using Playnite.SDK;
+﻿using Playnite.SDK;
 using Playnite.SDK.Data;
-using Playnite.SDK.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 
-namespace AutoFilterPresets.Models
+
+namespace AutoFilterPresets.Setings.Models
 {
+    public enum ConfirmationResult
+    {
+        Cancel = 0,
+        Save = 1,
+        Revert = 2,
+    }
+
     public partial class SettingsViewModel : ObservableObject, ISettings
     {
         private static readonly ILogger logger = LogManager.GetLogger();
@@ -29,10 +26,10 @@ namespace AutoFilterPresets.Models
 
         private readonly AutoFilterPresets plugin;
         public static IPlayniteAPI PlayniteAPI;
-        private AutoFilterPresetsSettings editingClone { get; set; }
+        private SettingsModel editingClone { get; set; }
 
-        private AutoFilterPresetsSettings settings;
-        public AutoFilterPresetsSettings Settings
+        private SettingsModel settings;
+        public SettingsModel Settings
         {
             get => settings;
             set
@@ -48,6 +45,23 @@ namespace AutoFilterPresets.Models
         private CollectionModel secondaryCollection;
         public CollectionModel SecondaryCollection { get => secondaryCollection; set => SetValue( ref secondaryCollection, value ); }
 
+        private bool syncCompilationIsEnabled = false;
+        public bool SyncCompilationIsEnabled { get => syncCompilationIsEnabled; set => SetValue( ref syncCompilationIsEnabled, value); }
+
+        private ConfirmationResult confirmationResult;
+
+        static private ObservableCollection<CompilationModel> compilations;
+        public ObservableCollection<CompilationModel> Compilations
+        {
+            get => compilations;
+            private set
+            {
+                SetValue(ref compilations, value);
+                OnPropertyChanged(nameof(GroupedCompilations));
+            }
+        }
+        public ObservableCollection<CompilationModel> GroupedCompilations { get => GetGroupedCompilations(Compilations); }
+
 
         public SettingsViewModel(AutoFilterPresets plugin, IPlayniteAPI PlayniteAPI)
         {
@@ -57,7 +71,7 @@ namespace AutoFilterPresets.Models
 
 
             // Load saved settings.
-            var savedSettings = plugin.LoadPluginSettings<AutoFilterPresetsSettings>();
+            var savedSettings = plugin.LoadPluginSettings<SettingsModel>();
 
             // LoadPluginSettings returns null if no saved data is available.
             if (savedSettings != null)
@@ -66,7 +80,7 @@ namespace AutoFilterPresets.Models
             }
             else
             {
-                Settings = new AutoFilterPresetsSettings();
+                Settings = new SettingsModel();
             }
 
             DropHandler = new OrderDropHandler();
@@ -93,7 +107,7 @@ namespace AutoFilterPresets.Models
             editingClone = Serialization.GetClone(Settings);
         }
 
-        ObservableCollection<Compilation> GetGroupedCompilations( IEnumerable<Compilation> compilations)
+        ObservableCollection<CompilationModel> GetGroupedCompilations( IEnumerable<CompilationModel> compilations)
         {
             var themes = compilations
                 .Where(c => c.IsTheme && (!string.IsNullOrEmpty(c.FilterImagesFolder) || !string.IsNullOrEmpty(c.FilterBackgroundsFolder)))
@@ -110,23 +124,23 @@ namespace AutoFilterPresets.Models
                 .OrderBy(c => c.Name)
                 .ToList();
 
-            var result = new List<Compilation>();
+            var result = new List<CompilationModel>();
 
             if (themes.Any())
             {
-                result.Add(new Compilation { IsGroup = true, Name = "Themes:" });
+                result.Add(new CompilationModel { IsGroup = true, Name = "Themes:" });
                 result.AddRange(themes);
             }
 
             if (userCompilations.Any())
             {
-                result.Add(new Compilation { IsGroup = true, Name = "User Compilations:" });
+                result.Add(new CompilationModel { IsGroup = true, Name = "User Compilations:" });
                 result.AddRange(userCompilations);
             }
 
             if (notConfigured.Any())
             {
-                result.Add(new Compilation { IsGroup = true, Name = "Not Configured Themes:" });
+                result.Add(new CompilationModel { IsGroup = true, Name = "Not Configured Themes:" });
                 result.AddRange(notConfigured);
             }
 
@@ -135,29 +149,90 @@ namespace AutoFilterPresets.Models
 
         public void CancelEdit()
         {
-            // Code executed when user decides to cancel any changes made since BeginEdit was called.
-            // This method should revert any changes made to Option1 and Option2.
             Settings = editingClone;
         }
 
         public void EndEdit()
         {
-            // Code executed when user decides to confirm changes made since BeginEdit was called.
-            // This method should save settings made to Option1 and Option2.
+            if( PrimaryCollection.CompilationChanged )
+            {
+                if (confirmationResult == ConfirmationResult.Save)
+                {
+                    PrimaryCollection.SaveImages();
+                }
+                else
+                {
+                    PrimaryCollection.RevertChanges();
+                }
+            }
+            if ( SyncCompilationIsEnabled && SecondaryCollection.CompilationChanged)
+            {
+                if (confirmationResult == ConfirmationResult.Save)
+                {
+                    SecondaryCollection.SaveImages();
+                }
+                else
+                {
+                    SecondaryCollection.RevertChanges();
+                }
+            }
             Settings.Compilations = GetReconfiguredCompilations(Compilations);
             plugin.SavePluginSettings(Settings);
         }
 
+
+        public ConfirmationResult ImageSaveConfirmationDialog(bool withRevert)
+        {
+            if (Settings.DontConfirmCopy)
+            {
+                return ConfirmationResult.Save;
+            }
+
+            var options = new List<MessageBoxOption>
+            {
+                new MessageBoxOption(withRevert ? "LOC_AutoFilterSettings_ConfirmationSaveWithSettings" : "LOC_AutoFilterSettings_ConfirmationSave",true),
+                new MessageBoxOption("LOC_AutoFilterSettings_ConfirmationCancel", false, true)
+            };
+
+            if (withRevert)
+            {
+                options.Insert(1, new MessageBoxOption("LOC_AutoFilterSettings_ConfirmationRevert", false));
+            }
+
+            var result = PlayniteAPI.Dialogs.ShowMessage(
+                ResourceProvider.GetString("LOC_AutoFilterSettings_ConfirmationText"),
+                ResourceProvider.GetString("LOC_AutoFilterSettings_ConfirmationCaption"),
+                MessageBoxImage.Warning,
+                options);
+            if (result == options[0])
+            {
+                return ConfirmationResult.Save;
+            }
+            else if (withRevert && result == options[1])
+            {
+                return ConfirmationResult.Revert;
+            }
+            return ConfirmationResult.Cancel;
+        }
         public bool VerifySettings(out List<string> errors)
         {
-            // Code execute when user decides to confirm changes made since BeginEdit was called.
-            // Executed before EndEdit is called and EndEdit is not called if false is returned.
-            // List of errors is presented to user if verification fails.
             errors = new List<string>();
+
+            confirmationResult = ConfirmationResult.Cancel;
+
+            if ( PrimaryCollection.CompilationChanged || ( SyncCompilationIsEnabled && SecondaryCollection.CompilationChanged) )
+            {
+                confirmationResult = ImageSaveConfirmationDialog(withRevert: true);
+                if (confirmationResult == ConfirmationResult.Cancel)
+                {
+                    errors.Add(ResourceProvider.GetString("LOC_AutoFilterSettings_SaveCanceled"));
+                    return false;
+                }
+            }
             return true;
         }
 
-        void FillImagesPlugin(AutoFilterPresetsSettings settings)
+        void FillImagesPlugin(SettingsModel settings)
         {
             string imagesPath = Path.Combine(plugin.GetPluginUserDataPath(), "FiltersImages");
             string backgroundsPath = Path.Combine(plugin.GetPluginUserDataPath(), "FiltersBackgrounds");

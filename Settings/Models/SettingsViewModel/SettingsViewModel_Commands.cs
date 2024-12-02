@@ -6,7 +6,7 @@ using System.Linq;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public partial class SettingsViewModel
     {
@@ -58,8 +58,8 @@ namespace AutoFilterPresets.Models
         public RelayCommand CopyCompilationFullToRightCommand => new RelayCommand(
             () => SyncCompilations(PrimaryCollection, SecondaryCollection, false),
             () =>
-                PrimaryCollection.SelectedCompilation is Compilation pfi
-                && SecondaryCollection.SelectedCompilation is Compilation sfi
+                PrimaryCollection.SelectedCompilation is CompilationModel pfi
+                && SecondaryCollection.SelectedCompilation is CompilationModel sfi
                 && pfi != sfi
                 && HasDifference(PrimaryCollection, SecondaryCollection, false)
         );
@@ -67,8 +67,8 @@ namespace AutoFilterPresets.Models
         public RelayCommand CopyCompilationFullToLeftCommand => new RelayCommand(
             () => SyncCompilations( SecondaryCollection, PrimaryCollection, false),
             () =>
-                PrimaryCollection.SelectedCompilation is Compilation pfi
-                && SecondaryCollection.SelectedCompilation is Compilation sfi
+                PrimaryCollection.SelectedCompilation is CompilationModel pfi
+                && SecondaryCollection.SelectedCompilation is CompilationModel sfi
                 && pfi != sfi
                 && HasDifference(SecondaryCollection, PrimaryCollection, false)
         );
@@ -76,8 +76,8 @@ namespace AutoFilterPresets.Models
         public RelayCommand CopyCompilationToRightCommand => new RelayCommand(
             () => SyncCompilations(PrimaryCollection, SecondaryCollection,true),
             () =>
-                PrimaryCollection.SelectedCompilation is Compilation pfi
-                && SecondaryCollection.SelectedCompilation is Compilation sfi
+                PrimaryCollection.SelectedCompilation is CompilationModel pfi
+                && SecondaryCollection.SelectedCompilation is CompilationModel sfi
                 && pfi != sfi
                 && HasDifference(PrimaryCollection, SecondaryCollection, true)
         );
@@ -85,8 +85,8 @@ namespace AutoFilterPresets.Models
         public RelayCommand CopyCompilationToLeftCommand => new RelayCommand(
             () => SyncCompilations( SecondaryCollection, PrimaryCollection, true),
             () =>
-                PrimaryCollection.SelectedCompilation is Compilation pfi
-                && SecondaryCollection.SelectedCompilation is Compilation sfi
+                PrimaryCollection.SelectedCompilation is CompilationModel pfi
+                && SecondaryCollection.SelectedCompilation is CompilationModel sfi
                 && pfi != sfi
                 && HasDifference(SecondaryCollection, PrimaryCollection, true)
         );

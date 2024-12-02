@@ -6,18 +6,25 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace AutoFilterPresets.Converters
+namespace AutoFilterPresets.Setings.Converters
 {
-    public class EnumToBooleanConverter : MarkupExtension, IValueConverter
+    public class BooleanToGridDefinitionConverter : MarkupExtension, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value.Equals(parameter);
+            var values = (parameter as string)?.Split(':');
+
+            if (values is null)
+            {
+                return new NotSupportedException();
+            }
+
+            return ((bool)value) == true ? values[0] : values[1] ?? "0";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value.Equals(true) ? parameter : Binding.DoNothing;
+            return new NotSupportedException();
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)

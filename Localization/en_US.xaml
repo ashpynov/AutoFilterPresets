@@ -19,14 +19,17 @@
     <sys:String x:Key="LOC_AutoFilterSettings_WithinGroups">Within type</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_Custom">Custom</sys:String>
 
+    <sys:String x:Key="LOC_AutoFilterSettings_DontConfirn">Disable Filter Image replacement confirmation</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_DontConfirnTitle" xml:space="preserve">Disable confirmation</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_DontConfirnWarn" xml:space="preserve">Replacement of Filter Images in Theme folders can not be undone.&#x0d;&#x0a;&#x0d;&#x0a;Are you sure to disable confirmation?</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_DontConfirnButton">I'm pretty smart! Disable Confirmation!</sys:String>
+
     <sys:String x:Key="LOC_AutoFilterSettings_CustomOrder">Custom Order:</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_PRESETS">PRESETS</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_SOURCES">SOURCES</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_PLATFORMS">PLATFORMS</sys:String>
 
-
-
-    <sys:String x:Key="LOC_AutoFilterSettings_Filters">Filters:</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_Filters">Filters (drag'n'drop to reorder):</sys:String>
 
     <sys:String x:Key="LOC_AutoFilterSettings_Collections">Collection</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_FilterImage">Image</sys:String>
@@ -59,6 +62,12 @@
     <sys:String x:Key="LOC_AutoFilterSettings_SelectBackgroundsFolder">Select folder with filter background images</sys:String>
 
     <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationCaption">Replace filter images files</sys:String>
-    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationText" xml:space="preserve">You are to replace filter images files in destintion folders.&#x0d;&#x0a;&#x0d;&#x0a;It can not be undone. Continue?</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_SaveCanceled">Save filter images canceled</sys:String>
+
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationSave">Replace Images</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationSaveWithSettings">Save Images &amp; Settings</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationRevert">Revert Images, Save Settings</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationCancel">Cancel</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationText" xml:space="preserve">You are going to replace filter images files in destintion folders.&#x0d;&#x0a;&#x0d;&#x0a;This operation can not be undone.&#x0d;&#x0a;&#x0d;&#x0a;Continue?</sys:String>
 
 </ResourceDictionary>

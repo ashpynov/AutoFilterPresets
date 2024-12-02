@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Windows;
 
-namespace  AutoFilterPresets.Models
+namespace  AutoFilterPresets.Setings.Models
 {
     public class FilterImages : ObservableObject
     {

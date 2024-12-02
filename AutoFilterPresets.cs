@@ -1,4 +1,5 @@
-﻿using AutoFilterPresets.Models;
+﻿using AutoFilterPresets.Setings.Models;
+using AutoFilterPresets.Settings.Views;
 using Playnite.SDK;
 using Playnite.SDK.Events;
 using Playnite.SDK.Models;
@@ -53,7 +54,7 @@ namespace AutoFilterPresets
 
         public override UserControl GetSettingsView(bool firstRunSettings)
         {
-            return new Views.SettingsView();
+            return new SettingsView();
         }
     }
 }

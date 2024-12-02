@@ -7,7 +7,7 @@ using System.Resources;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public enum SortingItemType
     {

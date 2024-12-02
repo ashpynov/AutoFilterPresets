@@ -5,9 +5,9 @@ using System.Linq;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
-    public class Compilation : ObservableObject
+    public class CompilationModel : ObservableObject
     {
 
         public string Id { get; set; }
@@ -19,11 +19,11 @@ namespace AutoFilterPresets.Models
 
         public string Path { get; set; }
 
-        public Compilation()
+        public CompilationModel()
         {
 
         }
-        public Compilation(string id, string filterImagesFolder, string filterBackgroundsFolder = null )
+        public CompilationModel(string id, string filterImagesFolder, string filterBackgroundsFolder = null )
         {
             Id = id;
             FilterImagesFolder = filterImagesFolder;
@@ -40,7 +40,7 @@ namespace AutoFilterPresets.Models
         public string FilterBackgroundsFolder { get; set; }
 
         private static readonly ILogger logger = LogManager.GetLogger();
-        public static Compilation FromThemeFile(string path)
+        public static CompilationModel FromThemeFile(string path)
         {
             if (path == null)
             {
@@ -56,7 +56,7 @@ namespace AutoFilterPresets.Models
 
             try
             {
-                var compilation = Serialization.FromYamlFile<Compilation>(path);
+                var compilation = Serialization.FromYamlFile<CompilationModel>(path);
                 compilation.Path =  System.IO.Path.GetDirectoryName(path);
                 compilation.IsTheme = true;
                 return compilation;
@@ -67,7 +67,7 @@ namespace AutoFilterPresets.Models
                 return null;
             }
         }
-        public static Compilation FromThemeId(string id)
+        public static CompilationModel FromThemeId(string id)
         {
             return FromThemeFile(GetThemePath(id));
         }
@@ -77,7 +77,7 @@ namespace AutoFilterPresets.Models
             var compilation = FindCompilation(id);
             return compilation?.Path;
         }
-        static public IEnumerable<Compilation> EnumThemes()
+        static public IEnumerable<CompilationModel> EnumThemes()
         {
             var themesRoot = new List<string>();
             if (!SettingsViewModel.PlayniteAPI.ApplicationInfo.IsPortable)
@@ -94,13 +94,13 @@ namespace AutoFilterPresets.Models
                 {
                     foreach (var compilationPath in Directory.EnumerateDirectories(themesFolder))
                     {
-                        Compilation compilation = Compilation.FromThemeFile(System.IO.Path.Combine(compilationPath, "theme.yaml"));
+                        CompilationModel compilation = CompilationModel.FromThemeFile(System.IO.Path.Combine(compilationPath, "theme.yaml"));
                         if (compilation != null) yield return compilation;
                     }
                 }
             }
         }
-        private static Compilation FindCompilation(string compilationId) => EnumThemes().FirstOrDefault(compilation => compilation.Id == compilationId);
+        private static CompilationModel FindCompilation(string compilationId) => EnumThemes().FirstOrDefault(compilation => compilation.Id == compilationId);
 
         public string GetCompilationRelativePath(string path, bool check = true)
         {
@@ -121,7 +121,7 @@ namespace AutoFilterPresets.Models
         {
             if (string.IsNullOrEmpty(path))
             {
-                return null;
+                return Path;
             }
 
             var fullPath = System.IO.Path.GetFullPath(path.Contains(":") ? path : System.IO.Path.Combine(Path?? "", path));

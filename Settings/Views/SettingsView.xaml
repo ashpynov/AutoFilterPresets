@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="AutoFilterPresets.Views.SettingsView"
+﻿<UserControl x:Class="AutoFilterPresets.Settings.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:c="clr-namespace:AutoFilterPresets.Converters"
-             xmlns:m="clr-namespace:AutoFilterPresets.Models"
-             xmlns:v="clr-namespace:AutoFilterPresets.Views"
+             xmlns:c="clr-namespace:AutoFilterPresets.Setings.Converters"
+             xmlns:m="clr-namespace:AutoFilterPresets.Setings.Models"
+             xmlns:v="clr-namespace:AutoFilterPresets.Settings.Views"
              xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600"
@@ -395,8 +395,15 @@
                         Margin="5,5,5,5"
                         GroupName="Order"
                     />
+
+                    <CheckBox
+                        Content="{DynamicResource LOC_AutoFilterSettings_DontConfirn}"
+                        IsChecked="{Binding Settings.DontConfirmCopy}"
+                        Margin="5,25,5,5"
+                        HorizontalAlignment="Left"
+                    />
                 </StackPanel>
-                <DockPanel
+                <!-- <DockPanel
                     Grid.Row="0" Grid.Column="1"
                     VerticalAlignment="Top"
                     MaxHeight="600"
@@ -449,7 +456,7 @@
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
-                </DockPanel>
+                </DockPanel> -->
             </Grid>
         </TabItem>
         <TabItem Name="TabCustomize"

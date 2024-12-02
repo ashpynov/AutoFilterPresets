@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace AutoFilterPresets.Converters
+namespace AutoFilterPresets.Setings.Converters
 {
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class BooleanToVisibilityConverter : MarkupExtension, IValueConverter

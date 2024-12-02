@@ -19,7 +19,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public partial class AutoFiltersModel: INotifyPropertyChanged
     {
@@ -36,10 +36,10 @@ namespace AutoFilterPresets.Models
         private ItemsControl ItemsFilterPresets;
 
         private Control FilterPresetSelector;
-        private readonly AutoFilterPresetsSettings Settings;
+        private readonly SettingsModel Settings;
 
 
-        public AutoFiltersModel( IPlayniteAPI playniteAPI, AutoFilterPresetsSettings settings )
+        public AutoFiltersModel( IPlayniteAPI playniteAPI, SettingsModel settings )
         {
             PlayniteAPI = playniteAPI;
             Settings = settings;
