@@ -19,7 +19,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public partial class AutoFiltersModel : INotifyPropertyChanged
     {

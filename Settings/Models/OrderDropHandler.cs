@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 
-namespace AutoFilterPresets.Models
+namespace AutoFilterPresets.Setings.Models
 {
     public class OrderDropHandler : IDropTarget
     {

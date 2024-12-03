@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-namespace AutoFilterPresets.Converters
+namespace AutoFilterPresets.Setings.Converters
 {
     public class EnumToBooleanConverter : MarkupExtension, IValueConverter
     {
