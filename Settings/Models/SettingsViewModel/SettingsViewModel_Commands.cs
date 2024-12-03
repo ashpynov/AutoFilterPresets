@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Controls;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 
@@ -10,6 +11,7 @@ namespace AutoFilterPresets.Setings.Models
 {
     public partial class SettingsViewModel
     {
+        private static ILogger Logger = LogManager.GetLogger();
         bool HasDifference(CollectionModel fromCollection, CollectionModel toCollection, bool MissingOnly=false)
         {
             bool hasDiff = false;
@@ -49,6 +51,10 @@ namespace AutoFilterPresets.Setings.Models
                     toCollection.ImagesCollection.Add(to);
                 }
 
+                if (to == null)
+                {
+                    continue;
+                }
                 to.Image = CopyValue( from?.Image, to?.Image, MissingOnly );
                 to.Background = CopyValue( from?.Background, to?.Background, MissingOnly );
             }
@@ -91,7 +97,11 @@ namespace AutoFilterPresets.Setings.Models
                 && HasDifference(SecondaryCollection, PrimaryCollection, true)
         );
         public RelayCommand CopyImageToRightCommand => new RelayCommand(
-            () => SecondaryCollection.SelectedfilterImages.Image = PrimaryCollection.SelectedfilterImages.Image,
+            () =>
+            {
+                SecondaryCollection.SelectedfilterImages.Image = PrimaryCollection.SelectedfilterImages.Image;
+                SecondaryCollection.OnFilesChanged();
+            },
             () =>
                 PrimaryCollection.SelectedfilterImages is FilterImages pfi
                 && SecondaryCollection.SelectedfilterImages is FilterImages sfi
@@ -99,7 +109,11 @@ namespace AutoFilterPresets.Setings.Models
         );
 
         public RelayCommand CopyImageToLeftCommand => new RelayCommand(
-            () => PrimaryCollection.SelectedfilterImages.Image = SecondaryCollection.SelectedfilterImages.Image,
+            () =>
+            {
+                PrimaryCollection.SelectedfilterImages.Image = SecondaryCollection.SelectedfilterImages.Image;
+                PrimaryCollection.OnFilesChanged();
+            },
             () =>
                 PrimaryCollection.SelectedfilterImages is FilterImages pfi
                 && SecondaryCollection.SelectedfilterImages is FilterImages sfi
@@ -107,7 +121,11 @@ namespace AutoFilterPresets.Setings.Models
         );
 
         public RelayCommand CopyBackgroundToRightCommand => new RelayCommand(
-            () => SecondaryCollection.SelectedfilterImages.Background = PrimaryCollection.SelectedfilterImages.Background,
+            () =>
+            {
+                SecondaryCollection.SelectedfilterImages.Background = PrimaryCollection.SelectedfilterImages.Background;
+                SecondaryCollection.OnFilesChanged();
+            },
             () =>
                 PrimaryCollection.SelectedfilterImages is FilterImages pfi
                 && SecondaryCollection.SelectedfilterImages is FilterImages sfi
@@ -115,7 +133,11 @@ namespace AutoFilterPresets.Setings.Models
         );
 
         public RelayCommand CopyBackgroundToLeftCommand => new RelayCommand(
-            () => PrimaryCollection.SelectedfilterImages.Background = SecondaryCollection.SelectedfilterImages.Background,
+            () =>
+            {
+                PrimaryCollection.SelectedfilterImages.Background = SecondaryCollection.SelectedfilterImages.Background;
+                PrimaryCollection.OnFilesChanged();
+            },
             () =>
                 PrimaryCollection.SelectedfilterImages is FilterImages pfi
                 && SecondaryCollection.SelectedfilterImages is FilterImages sfi
