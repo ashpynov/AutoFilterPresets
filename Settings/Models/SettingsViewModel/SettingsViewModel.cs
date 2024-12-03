@@ -90,7 +90,6 @@ namespace AutoFilterPresets.Setings.Models
         {
             // Code executed when settings view is opened and user starts editing values.
             Settings.AddMissingSortingItems();
-            FillImagesPlugin(Settings);
 
             Compilations =  GetAvailableCompilations().ToObservable();
 
@@ -105,6 +104,8 @@ namespace AutoFilterPresets.Setings.Models
             };
 
             editingClone = Serialization.GetClone(Settings);
+
+            Settings.SelectedFilter = null;
         }
 
         ObservableCollection<CompilationModel> GetGroupedCompilations( IEnumerable<CompilationModel> compilations)
@@ -230,29 +231,6 @@ namespace AutoFilterPresets.Setings.Models
                 }
             }
             return true;
-        }
-
-        void FillImagesPlugin(SettingsModel settings)
-        {
-            string imagesPath = Path.Combine(plugin.GetPluginUserDataPath(), "FiltersImages");
-            string backgroundsPath = Path.Combine(plugin.GetPluginUserDataPath(), "FiltersBackgrounds");
-
-            foreach (var f in settings.FilterList)
-            {
-                string image = Path.Combine(imagesPath, $"{f.Name}.png");
-                if (File.Exists(image))
-                {
-                    f.ImagesPath = image;
-                    f.ImagesPathIsChanged = false;
-                }
-
-                string background = Path.Combine(backgroundsPath, $"{f.Name}.jpg");
-                if (File.Exists(background))
-                {
-                    f.BackgroundsPath = background;
-                    f.BackgroundsPathIsChanged = false;
-                }
-            }
         }
    }
 }

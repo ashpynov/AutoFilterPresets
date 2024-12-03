@@ -267,7 +267,7 @@
                 <Grid>
                     <Image
                         Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant" DockPanel.Dock="Top"
-                        Source="{Binding SelectedfilterImages.Image, Mode=OneWay, Converter={StaticResource ImageStringToImageConverterCached}}" />
+                        Source="{Binding SelectedfilterImages.Image, Mode=OneWay, Converter={StaticResource ImageStringToImageConverter}}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <Button
                             Margin="5"
@@ -298,7 +298,7 @@
                 <Grid>
                     <Image
                         Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="Fant" DockPanel.Dock="Top"
-                        Source="{Binding SelectedfilterImages.Background, Mode=OneWay, Converter={StaticResource ImageStringToImageConverterCached}}" />
+                        Source="{Binding SelectedfilterImages.Background, Mode=OneWay, Converter={StaticResource ImageStringToImageConverter}}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <Button
                             Margin="5"
@@ -403,60 +403,6 @@
                         HorizontalAlignment="Left"
                     />
                 </StackPanel>
-                <!-- <DockPanel
-                    Grid.Row="0" Grid.Column="1"
-                    VerticalAlignment="Top"
-                    MaxHeight="600"
-                    IsEnabled="{Binding Settings.OrderBy, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static m:SortingOrder.Custom}}">
-                    <TextBlock
-                        Text="{DynamicResource LOC_AutoFilterSettings_CustomOrder}"
-                        Margin="0,0,5,5"
-                        DockPanel.Dock="Top"
-                    />
-                    <TreeView
-                        Margin="5"
-                        Name="OrderTreeView"
-                        dd:DragDrop.IsDragSource="True"
-                        dd:DragDrop.IsDropTarget="True"
-                        dd:DragDrop.DropHandler="{Binding DropHandler}"
-                        ItemsSource="{Binding Settings.SortedItems}"
-                        MinHeight="400"
-                        DockPanel.Dock="Top"
-                        >
-                        <TreeView.Resources>
-                            <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                                <Setter Property="Margin" Value="4,0,4,0" />
-                                <Setter Property="Padding" Value="0" />
-                            </Style>
-                            <Style TargetType="ItemsPresenter">
-                                <Setter Property="Margin" Value="0,4,0,4"/>
-                            </Style>
-                        </TreeView.Resources>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Items}">
-                                <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
-                                    <TextBlock Text="☰" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                    <TextBlock
-                                        Text="{Binding TranslatedName}"
-                                        VerticalAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontStyle" Value="Italic"/>
-                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsFilter}" Value="True">
-                                                        <Setter Property="FontStyle" Value="Normal"/>
-                                                        <Setter Property="FontWeight" Value="Normal"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
-                </DockPanel> -->
             </Grid>
         </TabItem>
         <TabItem Name="TabCustomize"

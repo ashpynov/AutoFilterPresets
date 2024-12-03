@@ -322,28 +322,35 @@ namespace AutoFilterPresets.Setings.Models
                 }
             }
 
-            if (copyToTemp.Count > 0)
+            try
             {
-                Directory.CreateDirectory(tempDir);
-                foreach (var image in copyToTemp)
+                if (copyToTemp.Count > 0)
                 {
-                    File.Copy(image.Item1, image.Item2);
+                    Directory.CreateDirectory(tempDir);
+                    foreach (var image in copyToTemp)
+                    {
+                        File.Copy(image.Item1, image.Item2, overwrite: true);
+                    }
+                }
+
+                foreach (var delete in toDelete)
+                {
+                    File.Delete(delete);
+                }
+
+                foreach (var image in copyToTarget)
+                {
+                    File.Copy(image.Item1, image.Item2, overwrite: true);
+                }
+
+                if (copyToTemp.Count > 0)
+                {
+                    Directory.Delete(tempDir, recursive: true);
                 }
             }
-
-            foreach(var delete in toDelete)
+            catch (Exception ex)
             {
-                File.Delete(delete);
-            }
-
-            foreach (var image in copyToTarget)
-            {
-                File.Copy(image.Item1, image.Item2);
-            }
-
-            if (copyToTemp.Count > 0)
-            {
-                Directory.Delete(tempDir, recursive: true);
+                PlayniteAPI.Dialogs.ShowErrorMessage($"Something goes wrong during files copying:\n{ex.Message}");
             }
 
             LoadCompilationImages();
