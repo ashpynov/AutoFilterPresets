@@ -28,6 +28,7 @@
     <sys:String x:Key="LOC_AutoFilterSettings_PRESETS">PRESETS</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_SOURCES">SOURCES</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_PLATFORMS">PLATFORMS</sys:String>
+    <sys:String x:Key="LOC_AutoFilterSettings_HIDDEN">HIDDEN FILTERS</sys:String>
 
     <sys:String x:Key="LOC_AutoFilterSettings_Filters">Filters (drag'n'drop to reorder):</sys:String>
 

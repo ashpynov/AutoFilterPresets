@@ -4,12 +4,14 @@ using Playnite.SDK;
 using Playnite.SDK.Data;
 using Playnite.SDK.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -95,7 +97,8 @@ namespace AutoFilterPresets.Setings.Models
         {
             new SortingItem() { Name = "<PRESETS>", SortingType = SortingItemType.Presets },
             new SortingItem() { Name = "<SOURCES>", SortingType = SortingItemType.Sources },
-            new SortingItem() { Name = "<PLATFORMS>", SortingType = SortingItemType.Platforms }
+            new SortingItem() { Name = "<PLATFORMS>", SortingType = SortingItemType.Platforms },
+            new SortingItem() { Name = "<HIDDEN>", SortingType = SortingItemType.Hidden }
         };
 
         ObservableCollection<SortingItem> GetFilterGroupItems(SortingItem group, IEnumerable<SortingItem> existedItems)
@@ -145,7 +148,18 @@ namespace AutoFilterPresets.Setings.Models
             return items.Select(name => new SortingItem() { Name = name, SortingType = itemSortingType, Parent = group  }).ToObservable();
         }
 
-        public void AddMissingSortingItems()
+        public IEnumerable<SortingItem> HiddenItems
+        { get => SortedItems.FirstOrDefault(g => g.SortingType == SortingItemType.Hidden)?.Items as IEnumerable<SortingItem> ?? new List<SortingItem>(); }
+
+        bool IsHidden(SortingItem item) => item.IsFilter && IsHidden(item.Name);
+        bool IsHidden(string name) => HiddenItems.Any(h => h.Name == name);
+
+        public void AddMissingRemoveHiddenSortingItems()
+        {
+            AddMissingSortingItems();
+            RemoveHiddenSortingItems();
+        }
+        void AddMissingSortingItems()
         {
             var saved = SortedItems.ToList();
             foreach (var sortingGroup in SettingsModel.defaultSortedItems)
@@ -169,9 +183,32 @@ namespace AutoFilterPresets.Setings.Models
             }
         }
 
+        void RemoveHiddenSortingItems()
+        {
+            RemoveHidden(SortedItems);
+        }
+
+        void RemoveHidden(ObservableCollection<SortingItem> items)
+        {
+            var itemsToRemove = items.Where(i => IsHidden(i)).ToList();
+            foreach (var remove in itemsToRemove)
+            {
+                items.Remove(remove);
+            }
+            var groups = items.Where(i => i.SortingType != SortingItemType.Hidden && i.Items?.Count() > 0);
+            foreach (var group in groups)
+            {
+                RemoveHidden(group.Items);
+            }
+        }
+        public void RemoveHidden(List<FilterPreset> Filters)
+        {
+            Filters.RemoveAll(f => IsHidden(f.Name));
+        }
+
         public void SortFilter(List<FilterPreset> Filters)
         {
-            AddMissingSortingItems();
+            AddMissingRemoveHiddenSortingItems();
 
             var plainList = new List<SortingItem>();
 

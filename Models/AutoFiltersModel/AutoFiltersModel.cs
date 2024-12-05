@@ -137,6 +137,8 @@ namespace AutoFilterPresets.Setings.Models
                 presets.AddRange(PlatformsAutoFilter().Where(s => presets.FindIndex(p => AreFiltersEqual(s, p)) == -1));
             }
 
+            Settings.RemoveHidden(presets);
+
             if (Settings.OrderBy == SortingOrder.Alphabet)
             {
                 presets.Sort((x, y) => x.Name.CompareTo(y.Name));

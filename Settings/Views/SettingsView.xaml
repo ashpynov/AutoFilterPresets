@@ -441,6 +441,7 @@
                             Name="FiltersTreeView"
                             dd:DragDrop.IsDragSource="True"
                             dd:DragDrop.IsDropTarget="True"
+                            dd:DragDrop.DragHandler="{Binding DragHandler}"
                             dd:DragDrop.DropHandler="{Binding DropHandler}"
                             ItemsSource="{Binding Settings.SortedItems}"
                             SelectedItemChanged="TreeView_SelectedItemChanged"
@@ -452,6 +453,11 @@
                                     <Setter Property="Margin" Value="4,0,4,0" />
                                     <Setter Property="Padding" Value="0" />
                                     <Setter Property="IsExpanded" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SortingType}" Value="{x:Static m:SortingItemType.Hidden}">
+                                            <Setter Property="Margin" Value="4,4,4,0"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                                 <Style TargetType="ItemsPresenter">
                                     <Setter Property="Margin" Value="0,4,0,4"/>
@@ -460,7 +466,24 @@
                             <TreeView.ItemTemplate>
                                 <HierarchicalDataTemplate ItemsSource="{Binding Items}">
                                     <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
-                                        <TextBlock Text="☰" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                        <TextBlock VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Margin" Value="0,0,5,0" />
+                                                    <Setter Property="Text" Value="☰" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SortingType}" Value="{x:Static m:SortingItemType.Hidden}">
+                                                            <Setter Property="Margin" Value="0,-5,5,-5" />
+                                                            <Setter Property="Text" Value="&#xef22;" />
+                                                            <Setter Property="FontSize" Value="22" />
+                                                            <Setter Property="FontStyle" Value="Normal"/>
+                                                            <Setter Property="FontWeight" Value="Normal"/>
+                                                            <Setter Property="FontFamily" Value="{StaticResource FontIcoFont}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
                                         <TextBlock
                                             Text="{Binding TranslatedName}"
                                             VerticalAlignment="Center">
@@ -608,11 +631,6 @@
         </TabItem>
         <TabItem
             Header="{DynamicResource LOC_AutoFilterSettings_Aliases}"
-            IsEnabled ="False"
-        >
-        </TabItem>
-        <TabItem
-            Header="{DynamicResource LOC_AutoFilterSettings_BlackList}"
             IsEnabled ="False"
         >
         </TabItem>

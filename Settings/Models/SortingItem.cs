@@ -17,6 +17,7 @@ namespace AutoFilterPresets.Setings.Models
         Sources,
         Platform,
         Platforms,
+        Hidden
     }
     public class SortingItem : ObservableObject
     {
@@ -27,7 +28,7 @@ namespace AutoFilterPresets.Setings.Models
         [DontSerialize]
         public string TranslatedName
         {
-            get => new[] {SortingItemType.Presets, SortingItemType.Sources, SortingItemType.Platforms }.Contains(SortingType)
+            get => new[] {SortingItemType.Presets, SortingItemType.Sources, SortingItemType.Platforms, SortingItemType.Hidden }.Contains(SortingType)
                 ? ResourceProvider.GetString($"LOC_AutoFilterSettings_{SortingType.ToString().ToUpper()}")
                 : Name;
         }
@@ -43,7 +44,7 @@ namespace AutoFilterPresets.Setings.Models
         [DontSerialize]
         public bool IsFilter
         {
-            get => new[] { SortingItemType.Presets, SortingItemType.Sources, SortingItemType.Platforms }.Contains(SortingType) == false;
+            get => new[] { SortingItemType.Presets, SortingItemType.Sources, SortingItemType.Platforms, SortingItemType.Hidden }.Contains(SortingType) == false;
         }
 
         private string imagePath;

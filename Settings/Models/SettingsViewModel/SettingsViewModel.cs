@@ -23,6 +23,7 @@ namespace AutoFilterPresets.Setings.Models
         private static readonly ILogger logger = LogManager.GetLogger();
 
         public OrderDropHandler DropHandler { get; }
+        public OrderDragHandler DragHandler { get; }
 
         private readonly AutoFilterPresets plugin;
         public static IPlayniteAPI PlayniteAPI;
@@ -83,13 +84,14 @@ namespace AutoFilterPresets.Setings.Models
                 Settings = new SettingsModel();
             }
 
+            DragHandler = new OrderDragHandler();
             DropHandler = new OrderDropHandler();
          }
 
         public void BeginEdit()
         {
             // Code executed when settings view is opened and user starts editing values.
-            Settings.AddMissingSortingItems();
+            Settings.AddMissingRemoveHiddenSortingItems();
 
             Compilations =  GetAvailableCompilations().ToObservable();
 

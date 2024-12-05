@@ -1,24 +1,27 @@
 using GongSolutions.Wpf.DragDrop;
 using GongSolutions.Wpf.DragDrop.Utilities;
-using Playnite.SDK;
-using Playnite.SDK.Data;
-using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+
 
 
 namespace AutoFilterPresets.Setings.Models
 {
+    public class OrderDragHandler : DefaultDragHandler
+    {
+        public override bool CanStartDrag(IDragInfo dragInfo)
+        {
+            if (dragInfo.SourceItem is SortingItem item && item.SortingType == SortingItemType.Hidden)
+            {
+                return false;
+            }
+            return base.CanStartDrag(dragInfo);
+        }
+    }
+
     public class OrderDropHandler : IDropTarget
     {
         int GetItemIndex(UIElement item)
@@ -45,7 +48,7 @@ namespace AutoFilterPresets.Setings.Models
                 var tv = dropInfo.VisualTarget as TreeView;
                 var height = tv.ActualHeight;
                 bool after = dropInfo.DropPosition.Y > 20;
-                var index = after ? tv.Items.Count - 1 : 0;
+                var index = after ? tv.Items.Count - 2 : 0;
                 var TargetItem = tv.Items[index];
 
                 index += after ? 1 : 0;
@@ -96,14 +99,18 @@ namespace AutoFilterPresets.Setings.Models
 
             if ( dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter)
                 && ( dragItem.IsGroup
-                    || dragItem.Parent != null
+                    || dragItem.Parent == targetItem
                     || !targetItem.IsGroup
-                    || !MatchType(dragItem.SortingType, targetItem.SortingType)
+                    || !(MatchType(dragItem.SortingType, targetItem.SortingType) || targetItem.SortingType==SortingItemType.Hidden)
                 )
             )
             {
                 var InsertPosition = dropInfo.InsertPosition & ~RelativeInsertPosition.TargetItemCenter;
                 SetProperty(dropInfo, nameof(InsertPosition), InsertPosition);
+            }
+            if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.AfterTargetItem) && targetItem.SortingType==SortingItemType.Hidden)
+            {
+                SetProperty(dropInfo, nameof(dropInfo.InsertIndex), dropInfo.InsertIndex-1);
             }
         }
 
