@@ -23,7 +23,7 @@ namespace AutoFilterPresets.Setings.Models
     {
         public string Name { get; set; }
         public SortingItemType SortingType { get; set; }
-        public ObservableCollection<SortingItem> Items { get; set; }
+        public ObservableCollection<SortingItem> Items { get; set; } = new ObservableCollection<SortingItem>();
 
         [DontSerialize]
         public string TranslatedName

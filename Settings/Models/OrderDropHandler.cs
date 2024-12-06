@@ -60,7 +60,11 @@ namespace AutoFilterPresets.Setings.Models
                 return;
             }
 
-            if (targetItem?.Parent != null)
+            if (dragItem.SortingType == targetItem.SortingType && dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter))
+            {
+
+            }
+            else if (targetItem?.Parent != null)
             {
                 var VisualTargetItem = dropInfo.VisualTargetItem.GetVisualAncestor<TreeViewItem>() ?? dropInfo.VisualTargetItem;
                 var TargetItem = targetItem.Parent;
@@ -97,7 +101,11 @@ namespace AutoFilterPresets.Setings.Models
 
             dropInfo.Effects = DragDropEffects.Move;
 
-            if ( dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter)
+            if (dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter) && dragItem.SortingType == targetItem.SortingType)
+            {
+
+            }
+            else if ( dropInfo.InsertPosition.HasFlag(RelativeInsertPosition.TargetItemCenter)
                 && ( dragItem.IsGroup
                     || dragItem.Parent == targetItem
                     || !targetItem.IsGroup
