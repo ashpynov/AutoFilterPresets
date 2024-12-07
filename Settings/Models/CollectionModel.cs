@@ -285,7 +285,7 @@ namespace AutoFilterPresets.Setings.Models
         public void SaveImages()
         {
             var imagesFolder = SelectedCompilation.GetCompilationFullPath(SelectedCompilation.FilterImagesFolder);
-            var backgroundsFolder = SelectedCompilation.GetCompilationFullPath(SelectedCompilation.FilterImagesFolder);
+            var backgroundsFolder = SelectedCompilation.GetCompilationFullPath(SelectedCompilation.FilterBackgroundsFolder);
 
             var images = ImagesCollection
                 .Where(i => i.Image != i.OriginalImage)

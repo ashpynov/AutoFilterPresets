@@ -148,6 +148,7 @@ namespace AutoFilterPresets.Setings.Models
             return items.Select(name => new SortingItem() { Name = name, SortingType = itemSortingType, Parent = group  }).ToObservable();
         }
 
+        [DontSerialize]
         public IEnumerable<SortingItem> HiddenItems
         { get => SortedItems.FirstOrDefault(g => g.SortingType == SortingItemType.Hidden)?.Items as IEnumerable<SortingItem> ?? new List<SortingItem>(); }
 

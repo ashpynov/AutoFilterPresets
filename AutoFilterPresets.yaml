@@ -1,9 +1,9 @@
 AddonId: 'AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193'
 Packages:
-- Version: 0.8
+- Version: 0.9
     RequiredApiVersion: 6.11.0
-    ReleaseDate: 2024-12-05
-    PackageUrl: https://github.com/ashpynov/AutoFilterPresets/releases/download/v0.7/AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193_0_7.pext
+    ReleaseDate: 2024-12-07
+    PackageUrl: https://github.com/ashpynov/AutoFilterPresets/releases/download/v0.9/AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193_0_9.pext
     Changelog:
       - Abitity to Hide/black list auto-preset
 - Version: 0.7
