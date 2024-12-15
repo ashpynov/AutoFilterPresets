@@ -16,6 +16,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Threading;
 using System.Xml;
 using AutoFilterPresets.Helpers;
 using AutoFilterPresets.Setings.Models;
@@ -60,6 +61,8 @@ namespace AutoFilterPresets.Views
         private readonly string ForderIcon = "\uef36";
         private readonly string DriveIcon = "\uef43";
         private readonly string UpIcon = "\uefd4";
+
+        private DispatcherTimer _tooltipTimer;
 
         private string Filter;
 
@@ -227,6 +230,23 @@ namespace AutoFilterPresets.Views
             }
         });
 
+        static Button currentFocusedButton = null;
+        private void TooltipTimer_Tick(object sender, EventArgs e)
+        {
+            _tooltipTimer.Stop();
+            if (currentFocusedButton is Button button && button.Content is FilePickerItem item && item.IsImage)
+            {
+                var toolTip = new ToolTip()
+                {
+                    Style = Application.Current.TryFindResource("FilePickerFilePreviewTooltip") as Style
+                            ?? Window.FindResource("FilePickerFilePreviewTooltip") as Style,
+                    Content = item,
+                    PlacementTarget = button
+                };
+                button.ToolTip = toolTip;
+                toolTip.IsOpen = true;
+            }
+        }
         public void FileButton_GotFocus(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Content is FilePickerItem item)
@@ -240,25 +260,21 @@ namespace AutoFilterPresets.Views
                     };
                 }
                 Selected = item;
+                currentFocusedButton = button;
 
                 if (item.IsImage)
                 {
-                    var toolTip = new ToolTip()
-                    {
-                        Style = Application.Current.TryFindResource("FilePickerFilePreviewTooltip") as Style
-                                ?? Window.FindResource("FilePickerFilePreviewTooltip") as Style,
-                        Content = item,
-                        PlacementTarget = button
-                    };
-                    button.ToolTip = toolTip;
+                    _tooltipTimer.Start();
                 }
             }
         }
 
         public void FileButton_LostFocus(object sender, RoutedEventArgs e)
         {
+            _tooltipTimer.Stop();
             if (sender is Button button && button.ToolTip is ToolTip tooltip)
             {
+                currentFocusedButton = null;
                 tooltip.StaysOpen = false;
                 tooltip.IsOpen = false;
                 button.ToolTip = null;
@@ -359,6 +375,10 @@ namespace AutoFilterPresets.Views
         }
         public void CreateItemsControlEx()
         {
+            _tooltipTimer = new DispatcherTimer();
+            _tooltipTimer.Interval = TimeSpan.FromMilliseconds(300); // Set debounce delay
+            _tooltipTimer.Tick += TooltipTimer_Tick;
+
             // Use reflection to get the ButtonEx Type
             Assembly assembly = Assembly.GetEntryAssembly();
             Assembly playnite = Assembly.LoadFrom(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "playnite.dll"));

@@ -50,7 +50,7 @@
 
         <Style TargetType="ToolTip" x:Key="FilePickerFilePreviewTooltip">
             <Setter Property="StaysOpen" Value="True" />
-            <Setter Property="IsOpen" Value="True" />
+            <!-- <Setter Property="IsOpen" Value="True" /> -->
             <Setter Property="Placement" Value="Right" />
             <Setter Property="HorizontalOffset" Value=" 40" />
             <Setter Property="VerticalOffset" Value="-20" />
