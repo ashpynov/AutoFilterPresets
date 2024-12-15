@@ -20,5 +20,6 @@
     "csharp.debug.logging.diagnosticsLog.debugRuntimeEventTracing": true,
     "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": false,
     "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": false,
-    "dotnet.typeMembers.propertyGenerationBehavior": "preferAutoProperties"
+    "dotnet.typeMembers.propertyGenerationBehavior": "preferAutoProperties",
+    "dotnet.preferCSharpExtension": true
 }

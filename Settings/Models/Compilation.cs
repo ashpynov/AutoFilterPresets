@@ -100,7 +100,7 @@ namespace AutoFilterPresets.Setings.Models
                 }
             }
         }
-        private static CompilationModel FindCompilation(string compilationId) => EnumThemes().FirstOrDefault(compilation => compilation.Id == compilationId);
+        public static CompilationModel FindCompilation(string compilationId) => EnumThemes().FirstOrDefault(compilation => compilation.Id == compilationId);
 
         public string GetCompilationRelativePath(string path, bool check = true)
         {

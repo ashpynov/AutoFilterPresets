@@ -101,6 +101,11 @@ namespace AutoFilterPresets.Setings.Models
             new SortingItem() { Name = "<HIDDEN>", SortingType = SortingItemType.Hidden }
         };
 
+        [DontSerialize]
+        public string CurrentThemeImagesPath = null;
+        [DontSerialize]
+        public string CurrentThemeBackgroundsPath = null;
+
         ObservableCollection<SortingItem> GetFilterGroupItems(SortingItem group, IEnumerable<SortingItem> existedItems)
         {
             if (!SettingsViewModel.PlayniteAPI.Database.IsOpen || Application.Current?.MainWindow?.DataContext == null)

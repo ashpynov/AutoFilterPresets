@@ -1,4 +1,5 @@
-﻿using AutoFilterPresets.Setings.Models;
+﻿using AutoFilterPresets.Models;
+using AutoFilterPresets.Setings.Models;
 using AutoFilterPresets.Settings.Views;
 using Playnite.SDK;
 using Playnite.SDK.Events;
@@ -23,7 +24,8 @@ namespace AutoFilterPresets
         private static readonly string PluginFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public override Guid Id { get; } = Guid.Parse("1844176c-4d02-4bf8-b852-78b36a9de193");
 
-        public static AutoFiltersModel Model;
+        public static AutoFiltersModel AutoFilters;
+        public static FullscreenMenuModel FullscreenMenu;
 
         public AutoFilterPresets(IPlayniteAPI api) : base(api)
         {
@@ -43,7 +45,8 @@ namespace AutoFilterPresets
 
             if (PlayniteAPI.ApplicationInfo.Mode == ApplicationMode.Fullscreen)
             {
-                Model = new AutoFiltersModel(PlayniteAPI, SettingsViewModel.Settings);
+                AutoFilters = new AutoFiltersModel(PlayniteAPI, SettingsViewModel.Settings);
+                FullscreenMenu = new FullscreenMenuModel(AutoFilters, SettingsViewModel.Settings);
             }
         }
 

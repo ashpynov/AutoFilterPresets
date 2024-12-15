@@ -1,0 +1,172 @@
+<Window x:Class="AutoFilterPresets.Views.FullscreenFilePicker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:h="clr-namespace:AutoFilterPresets.Helpers"
+        >
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Background" Value="#01000000" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Window}">
+                        <Border Background="{TemplateBinding Background}">
+                            <AdornerDecorator>
+                                <ContentPresenter />
+                            </AdornerDecorator>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
+    <Window.Resources>
+        <DataTemplate x:Key="FilePickerFileButtonTemplate">
+            <StackPanel
+                Orientation="Horizontal"
+                VerticalAlignment="Center">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    TextTrimming="CharacterEllipsis"
+                    FontFamily="{StaticResource FontIcoFont}"
+                    Text="{Binding Icon}"
+                    Margin="5"
+                />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    TextTrimming="CharacterEllipsis"
+                    Text="{Binding Name}"
+                    Margin="5"
+                />
+            </StackPanel>
+        </DataTemplate>
+        <!-- <DataTemplate x:Key="FilePickerFooterUpButtonTemplate">
+            <StackPanel Orientation="Horizontal">
+                <ContentControl ContentTemplate="{DynamicResource ButtonPromptY}" VerticalAlignment="Center"
+                                Focusable="False" Margin="0,0,15,0"/>
+                <TextBlock Text="{DynamicResource LOC_FilePicker_Footer_UpCommand}" VerticalAlignment="Center"
+                            Style="{StaticResource TextBlockBaseStyle}" />
+            </StackPanel>
+        </DataTemplate> -->
+
+        <Style TargetType="ToolTip" x:Key="FilePickerFilePreviewTooltip">
+            <Setter Property="StaysOpen" Value="True" />
+            <Setter Property="IsOpen" Value="True" />
+            <Setter Property="Placement" Value="Right" />
+            <Setter Property="HorizontalOffset" Value=" 40" />
+            <Setter Property="VerticalOffset" Value="-20" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip" >
+                        <Border Style="{DynamicResource ItemSelectionBorder}"
+                                MaxWidth="500" Width="Auto"
+                                MaxHeight="500" Height="Auto" >
+                            <Image x:Name="PART_Preview"
+                                Margin="20,20,20,20"
+                                Stretch="Uniform"
+                                StretchDirection="DownOnly"
+                                RenderOptions.BitmapScalingMode="Fant"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Source="{Binding FilePath, Mode=OneWay, Converter={StaticResource ImageStringToImageConverter}}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- <Style TargetType="c:CheckBoxEx" BasedOn="{StaticResource SettingsSectionCheckbox}" />
+        <Style TargetType="c:ComboBoxEx" BasedOn="{StaticResource SettingsSectionCombobox}" />
+        <Style TargetType="Grid" BasedOn="{StaticResource SettingsSectionCombobox}" /> -->
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Return" Command="{Binding SelectCommand}" />
+        <KeyBinding Key="Esc" Command="{Binding CancelCommand}" />
+        <KeyBinding Key="Up" Modifiers="Alt" Command="{Binding UpCommand}" />
+    </Window.InputBindings>
+    <Viewbox>
+        <Grid Height="1080" Width="1920" Name="GridMain">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="9*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Style="{DynamicResource ItemSelectionBorder}"
+                    MinWidth="400" Width="Auto" MaxWidth = "800"
+                    Grid.Column="1" Grid.Row="1"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <DockPanel x:Name="PART_DockHost">
+                    <TextBlock
+                        Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
+                        Style="{DynamicResource ItemSelectionHeaderText}"
+                        DockPanel.Dock="Top"
+                    />
+                    <TextBox
+                        x:Name="PART_CurrentPath"
+                        Text="{Binding CurrentPath}"
+                        Focusable="True"
+                        DockPanel.Dock="Top"
+                        Loaded="TextBox_ScrolltoEnd"
+                        TextChanged="TextBox_ScrolltoEnd"
+                        LostFocus="TextBox_ScrolltoEnd"
+                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                        Margin="20"
+                        Padding="20"
+                    />
+                    <Border Style="{DynamicResource ItemSelectionFooterBorder}" DockPanel.Dock="Bottom" MinHeight="80">
+                    <StackPanel x:Name="PART_FooterPanel">
+                    </StackPanel>
+                    </Border>
+                    <!--
+                    <ItemsControlEx x:Name="PART_ItemsHost" Focusable="False"
+                                        KeyboardNavigation.DirectionalNavigation="Once"
+                                        ItemsSource="{Binding Items}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ButtonEx
+                                    Content="{Binding}"
+                                    Command="{Binding Command}"
+                                    ContentTemplate="{Binding Template}"
+                                    CommandParameter="{Binding CommandParameter}"
+                                />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.Template>
+                            <ControlTemplate>
+                                <ScrollViewer Focusable="False"
+                                            KeyboardNavigation.DirectionalNavigation="None"
+                                            HorizontalScrollBarVisibility="Disabled"
+                                            VerticalScrollBarVisibility="Auto"
+                                            CanContentScroll="True">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                    </ItemsControlEx>
+                    -->
+                </DockPanel>
+            </Border>
+            <!-- <Border Style="{DynamicResource GameMenuBorder}"
+                    MaxWidth="400" Width="Auto"
+                    MaxHeight="400" Height="Auto"
+                    Margin="20,0,0,0"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Image
+                    Margin="20,20,20,20"
+                    Stretch="Uniform"
+                    StretchDirection="DownOnly"
+                    RenderOptions.BitmapScalingMode="Fant"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Source="{Binding Selected.FilePath, Mode=OneWay, Converter={StaticResource ImageStringToImageConverter}}" />
+            </Border> -->
+        </Grid>
+    </Viewbox>
+</Window>

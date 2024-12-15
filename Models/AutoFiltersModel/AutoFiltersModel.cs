@@ -1,22 +1,14 @@
 using AutoFilterPresets.Helpers;
 using Playnite.SDK;
-using Playnite.SDK.Controls;
 using Playnite.SDK.Data;
 using Playnite.SDK.Models;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
 
 
 namespace AutoFilterPresets.Setings.Models
@@ -37,7 +29,6 @@ namespace AutoFilterPresets.Setings.Models
 
         private Control FilterPresetSelector;
         private readonly SettingsModel Settings;
-
 
         public AutoFiltersModel( IPlayniteAPI playniteAPI, SettingsModel settings )
         {
@@ -125,7 +116,11 @@ namespace AutoFilterPresets.Setings.Models
 
         private void UpdateAutoPresets()
         {
-            dynamic model = Application.Current.MainWindow.DataContext;
+            dynamic model = Application.Current?.MainWindow?.DataContext;
+            if (model == null)
+            {
+                return;
+            }
             var presets = model.SortedFilterFullscreenPresets as List<FilterPreset>;
             if (Settings.CreateSources)
             {
@@ -210,7 +205,7 @@ namespace AutoFilterPresets.Setings.Models
             {
                 return activeFilterPreset;
             }
-            private set
+            set
             {
                 PlayniteAPI.MainView.ApplyFilterPreset(value);
                 SetValue(ref activeFilterPreset, value);

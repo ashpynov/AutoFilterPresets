@@ -71,4 +71,9 @@
     <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationCancel">Cancel</sys:String>
     <sys:String x:Key="LOC_AutoFilterSettings_ConfirmationText" xml:space="preserve">You are going to replace filter images files in destintion folders.&#x0d;&#x0a;&#x0d;&#x0a;This operation can not be undone.&#x0d;&#x0a;&#x0d;&#x0a;Continue?</sys:String>
 
+    <sys:String x:Key="LOC_AutoFilter_SelectImageTitle">Select Image for '{0}' filter</sys:String>
+    <sys:String x:Key="LOC_AutoFilter_SelectBackgroundTitle">Select Background for '{0}' filter</sys:String>
+
+    <sys:String x:Key="LOC_FilePicker_Footer_UpCommand">Up</sys:String>
+
 </ResourceDictionary>

@@ -86,6 +86,12 @@ namespace AutoFilterPresets.Setings.Models
 
             DragHandler = new OrderDragHandler();
             DropHandler = new OrderDropHandler();
+
+            if (GetAvailableCompilations().FirstOrDefault(c => c.Id == PlayniteAPI.ApplicationSettings.FullscreenTheme) is CompilationModel compilation)
+            {
+                Settings.CurrentThemeImagesPath = compilation.GetCompilationFullPath(compilation.FilterImagesFolder);
+                Settings.CurrentThemeBackgroundsPath = compilation.GetCompilationFullPath(compilation.FilterBackgroundsFolder);
+            }
          }
 
         public void BeginEdit()
