@@ -3,6 +3,8 @@
 
 Automatic Filter Presets is an extension for Playnite game manager and launcher to automaticly create in-memory filter presets for grouping you games by Sources and Platforms.
 
+Also you can change order of fullscreen preset and Preset images on supported themes.
+
 [Latest Release](https://github.com/ashpynov/AutoFilterPresets/releases/latest)
 
 ## If you feel like supporting

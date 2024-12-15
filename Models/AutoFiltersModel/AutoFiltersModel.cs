@@ -330,7 +330,6 @@ namespace AutoFilterPresets.Setings.Models
            () => SelectPreset(),
            () => PlayniteAPI.Database?.IsOpen == true
         );
-
- }
+    }
 }
 
