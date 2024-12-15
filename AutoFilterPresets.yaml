@@ -1,11 +1,12 @@
 AddonId: 'AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193'
 Packages:
-- Version: 0.10
+- Version: 0.11
     RequiredApiVersion: 6.11.0
     ReleaseDate: 2024-12-15
-    PackageUrl: https://github.com/ashpynov/AutoFilterPresets/releases/download/v0.10/AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193_0_10.pext
+    PackageUrl: https://github.com/ashpynov/AutoFilterPresets/releases/download/v0.11/AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193_0_11.pext
     Changelog:
       - Abitity to change presets images using fullscreen mode via presets menu.
+      - Image preview tooltip debounce
 - Version: 0.9
     RequiredApiVersion: 6.11.0
     ReleaseDate: 2024-12-07
