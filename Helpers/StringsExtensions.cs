@@ -6,7 +6,7 @@ namespace System
 
         public static bool IsNullOrEmpty(this string source)
         {
-            return source.IsNullOrEmpty();
+            return string.IsNullOrEmpty(source);
         }
 
         public static bool IsNullOrWhiteSpace(this string source)
