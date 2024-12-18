@@ -105,7 +105,7 @@ namespace AutoFilterPresets.Views
 
         public void ReadDirectory()
         {
-            if (string.IsNullOrEmpty(currentPath))
+            if (currentPath.IsNullOrEmpty())
             {
                 Items.Clear();
                 Items.AddMissing(DriveInfo
@@ -164,7 +164,7 @@ namespace AutoFilterPresets.Views
             Items.AddMissing(directories.Concat(files));
 
             FilePickerItem selected = null;
-            if ((Items.FirstOrDefault(i => i.FilePath?.ToLower() == prevPath?.ToLower()) ?? Items.FirstOrDefault()) is FilePickerItem item)
+            if ((Items.FirstOrDefault(i => i.FilePath.IsNoCaseEqual(prevPath)) ?? Items.FirstOrDefault()) is FilePickerItem item)
             {
                 item.Selected = true;
                 selected = item;

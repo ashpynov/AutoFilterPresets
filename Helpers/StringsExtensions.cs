@@ -6,12 +6,21 @@ namespace System
 
         public static bool IsNullOrEmpty(this string source)
         {
-            return string.IsNullOrEmpty(source);
+            return source.IsNullOrEmpty();
         }
 
         public static bool IsNullOrWhiteSpace(this string source)
         {
             return string.IsNullOrWhiteSpace(source);
+        }
+        public static bool IsNoCaseEqual(this string first, string second)
+        {
+            if (first.IsNullOrEmpty() || second.IsNullOrEmpty())
+            {
+                return first == second;
+            }
+
+            return string.Compare(first, second, true) == 0;
         }
     }
 }

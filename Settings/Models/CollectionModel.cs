@@ -44,7 +44,7 @@ namespace AutoFilterPresets.Setings.Models
         {
             var missed = Settings
                 .FilterList
-                .Where(f => f.IsFilter && ImagesCollection.FirstOrDefault(i => i.Name.ToLower() == f.Name.ToLower()) is null)
+                .Where(f => f.IsFilter && ImagesCollection.FirstOrDefault(i => i.Name.IsNoCaseEqual(f.Name)) is null)
                 .Select(f => new FilterImages(f.Name));
 
             if (refresh == false)
@@ -66,7 +66,7 @@ namespace AutoFilterPresets.Setings.Models
 
         public void SetSelectedFilterImages(string FilterName)
         {
-            SelectedfilterImages = string.IsNullOrEmpty(FilterName) ? null : ImagesCollection.FirstOrDefault( i => i.Name.ToLower() == FilterName.ToLower());
+            SelectedfilterImages = FilterName.IsNullOrEmpty() ? null : ImagesCollection.FirstOrDefault( i => i.Name.IsNoCaseEqual(FilterName));
         }
 
         private CompilationModel selectedCompilation;
@@ -90,7 +90,7 @@ namespace AutoFilterPresets.Setings.Models
             {
                 compilationBackgroundsFolder = value;
                 var path = compilationBackgroundsFolder;
-                if (SelectedCompilation is CompilationModel compilation && (string.IsNullOrEmpty(path) || (path = compilation.GetCompilationRelativePath(path)) is string))
+                if (SelectedCompilation is CompilationModel compilation && (path.IsNullOrEmpty() || (path = compilation.GetCompilationRelativePath(path)) is string))
                 {
                     compilation.FilterBackgroundsFolder = compilationBackgroundsFolder = path;
                     LoadCompilationBackgrounds();
@@ -108,7 +108,7 @@ namespace AutoFilterPresets.Setings.Models
             {
                 compilationRootFolder = value;
                 var path = compilationRootFolder;
-                if (SelectedCompilation is CompilationModel compilation && compilation.Path?.ToLower() != path?.ToLower() && (string.IsNullOrEmpty(path) || Directory.Exists(path)))
+                if (SelectedCompilation is CompilationModel compilation && !compilation.Path.IsNoCaseEqual(path) && (path.IsNullOrEmpty() || Directory.Exists(path)))
                 {
                     var images = compilation.GetCompilationFullPath(compilation.FilterImagesFolder);
                     var backgrounds = compilation.GetCompilationFullPath(compilation.FilterBackgroundsFolder);
@@ -131,7 +131,7 @@ namespace AutoFilterPresets.Setings.Models
             {
                 compilationImagesFolder = value;
                 var path = compilationImagesFolder;
-                if (SelectedCompilation is CompilationModel compilation && (string.IsNullOrEmpty(path) || (path = compilation.GetCompilationRelativePath(path)) is string))
+                if (SelectedCompilation is CompilationModel compilation && (path.IsNullOrEmpty() || (path = compilation.GetCompilationRelativePath(path)) is string))
                 {
                     compilation.FilterImagesFolder = compilationImagesFolder = path;
                     LoadCompilationImages();
@@ -156,7 +156,7 @@ namespace AutoFilterPresets.Setings.Models
             var imagesPath = SelectedCompilation?.GetCompilationFullPath(SelectedCompilation.FilterImagesFolder);
             foreach (var f in filterImages ?? ImagesCollection)
             {
-                string image = string.IsNullOrEmpty(imagesPath) ? null : Path.Combine(imagesPath, $"{f.Name}.png");
+                string image = imagesPath.IsNullOrEmpty() ? null : Path.Combine(imagesPath, $"{f.Name}.png");
                 f.OriginalImage = f.Image = (image != null && File.Exists(image)) ? image : null;
             }
             imagesPathIsChanged = false;
@@ -168,7 +168,7 @@ namespace AutoFilterPresets.Setings.Models
             var backgroundsPath = SelectedCompilation?.GetCompilationFullPath(SelectedCompilation.FilterBackgroundsFolder);
             foreach (var f in filterImages ?? ImagesCollection)
             {
-                string background = string.IsNullOrEmpty(backgroundsPath) ? null : Path.Combine(backgroundsPath, $"{f.Name}.jpg");
+                string background = backgroundsPath.IsNullOrEmpty() ? null : Path.Combine(backgroundsPath, $"{f.Name}.jpg");
                 f.OriginalBackground = f.Background = (background != null && File.Exists(background)) ? background : null;
             }
             backgroundsPathIsChanged = false;
@@ -179,7 +179,7 @@ namespace AutoFilterPresets.Setings.Models
             () =>
             {
                 var folder = PlayniteAPI.Dialogs.SelectFolder();
-                if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
+                if (!folder.IsNullOrEmpty() && Directory.Exists(folder))
                 {
                     CompilationRootFolder = folder;
                 }
@@ -191,7 +191,7 @@ namespace AutoFilterPresets.Setings.Models
             () =>
             {
                 var folder = PlayniteAPI.Dialogs.SelectFolder();
-                if (!string.IsNullOrEmpty(folder) && SelectedCompilation.GetCompilationRelativePath(folder) is string relPath)
+                if (!folder.IsNullOrEmpty() && SelectedCompilation.GetCompilationRelativePath(folder) is string relPath)
                 {
                     CompilationImagesFolder = relPath;
                 }
@@ -242,8 +242,8 @@ namespace AutoFilterPresets.Setings.Models
 
         public void OnFilesChanged()
         {
-            var ic = ImagesCollection.Any(i => i.Image?.ToLower() != i.OriginalImage?.ToLower());
-            var bc = ImagesCollection.Any(i => i.Background?.ToLower() != i.OriginalBackground?.ToLower());
+            var ic = ImagesCollection.Any(i => !i.Image.IsNoCaseEqual(i.OriginalImage));
+            var bc = ImagesCollection.Any(i => !i.Background.IsNoCaseEqual(i.OriginalBackground));
 
             if (imagesPathIsChanged != ic || backgroundsPathIsChanged != bc)
             {
@@ -257,7 +257,7 @@ namespace AutoFilterPresets.Setings.Models
             () =>
             {
                 var folder = PlayniteAPI.Dialogs.SelectFolder();
-                if (!string.IsNullOrEmpty(folder) && SelectedCompilation.GetCompilationRelativePath(folder) is string relPath)
+                if (!folder.IsNullOrEmpty() && SelectedCompilation.GetCompilationRelativePath(folder) is string relPath)
                 {
                     CompilationBackgroundsFolder = relPath;
                 }
@@ -373,7 +373,7 @@ namespace AutoFilterPresets.Setings.Models
             (a) =>
             {
                 var image = PlayniteAPI.Dialogs.SelectFile("PNG image|*.png");
-                if (!string.IsNullOrEmpty(image))
+                if (!image.IsNullOrEmpty())
                 {
                     (a as FilterImages).Image = image;
                 }
@@ -383,17 +383,17 @@ namespace AutoFilterPresets.Setings.Models
         );
         public RelayCommand<object> RemoveFilterImageCommand => new RelayCommand<object>(
             (a) => { (a as FilterImages).Image = null; OnFilesChanged(); },
-            (a) => a is FilterImages fi && !string.IsNullOrEmpty(fi.Image)
+            (a) => a is FilterImages fi && !fi.Image.IsNullOrEmpty()
         );
         public RelayCommand<object> RevertFilterImageCommand => new RelayCommand<object>(
             (a) => { (a as FilterImages).Image = (a as FilterImages).OriginalImage; OnFilesChanged(); },
-            (a) =>  a is FilterImages fi && fi.Image?.ToLower() != fi.OriginalImage?.ToLower()
+            (a) =>  a is FilterImages fi && !fi.Image.IsNoCaseEqual(fi.OriginalImage)
         );
         public RelayCommand<object> SelectFilterBackgroundCommand => new RelayCommand<object>(
             (a) =>
             {
                 var image = PlayniteAPI.Dialogs.SelectFile("JPG image|*.jpg");
-                if (!string.IsNullOrEmpty(image))
+                if (!image.IsNullOrEmpty())
                 {
                     (a as FilterImages).Background = image;
                 }
@@ -403,11 +403,11 @@ namespace AutoFilterPresets.Setings.Models
         );
         public RelayCommand<object> RemoveFilterBackgroundCommand => new RelayCommand<object>(
             (a) => { (a as FilterImages).Background = null; OnFilesChanged(); },
-            (a) => a is FilterImages fi && !string.IsNullOrEmpty(fi.Background)
+            (a) => a is FilterImages fi && !fi.Background.IsNullOrEmpty()
         );
         public RelayCommand<object> RevertFilterBackgroundCommand => new RelayCommand<object>(
             (a) => { (a as FilterImages).Background = (a as FilterImages).OriginalBackground; OnFilesChanged(); },
-            (a) =>  a is FilterImages fi && fi.Background?.ToLower() != fi.OriginalBackground?.ToLower()
+            (a) =>  a is FilterImages fi && !fi.Background.IsNoCaseEqual(fi.OriginalBackground)
         );
     }
 }

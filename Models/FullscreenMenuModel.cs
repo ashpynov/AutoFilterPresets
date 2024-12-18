@@ -97,7 +97,7 @@ namespace AutoFilterPresets.Models
         void ReplaceImage(string srcImage, string destImage)
         {
 
-            if (srcImage.IsNullOrEmpty() || destImage.IsNullOrEmpty() || destImage.ToLower() == srcImage.ToLower())
+            if (srcImage.IsNullOrEmpty() || destImage.IsNullOrEmpty() || destImage.IsNoCaseEqual(srcImage))
             {
                 return;
             }

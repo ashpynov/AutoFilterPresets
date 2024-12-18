@@ -104,13 +104,13 @@ namespace AutoFilterPresets.Setings.Models
 
         public string GetCompilationRelativePath(string path, bool check = true)
         {
-            if (string.IsNullOrEmpty(path))
+            if (path.IsNullOrEmpty())
             {
                 return null;
             }
 
             var fullPath = GetCompilationFullPath(path, check);
-            return string.IsNullOrEmpty(fullPath)
+            return fullPath.IsNullOrEmpty()
                 ? null
                 : fullPath.ToLower().Trim('\\').StartsWith((Path ?? "").ToLower().Trim('\\'))
                     ? fullPath.Substring((Path ?? "").Trim('\\').Length).TrimStart('\\')
@@ -119,7 +119,7 @@ namespace AutoFilterPresets.Setings.Models
 
         public string GetCompilationFullPath(string path, bool check = true)
         {
-            if (string.IsNullOrEmpty(path))
+            if (path.IsNullOrEmpty())
             {
                 return Path;
             }

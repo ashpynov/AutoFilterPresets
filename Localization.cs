@@ -43,7 +43,7 @@ namespace AutoFilterPresets
 
                     foreach (var key in res.Keys)
                     {
-                        if (res[key] is string locString && string.IsNullOrEmpty(locString))
+                        if (res[key] is string locString && locString.IsNullOrEmpty())
                         {
                             res.Remove(key);
                         }

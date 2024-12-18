@@ -16,7 +16,7 @@ using System.Windows.Controls;
 
 namespace AutoFilterPresets
 {
-    public class AutoFilterPresets : GenericPlugin
+    public partial class AutoFilterPresets : GenericPlugin
     {
         private static readonly ILogger Logger = LogManager.GetLogger();
         public static IPlayniteAPI PlayniteAPI { get; private set; }

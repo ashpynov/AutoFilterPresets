@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,8 +28,8 @@ namespace AutoFilterPresets.Setings.Models
                 else
                 {
                     hasDiff = hasDiff
-                    || ((!MissingOnly || string.IsNullOrEmpty(to?.Image)) && from?.Image != to?.Image)
-                    || ((!MissingOnly || string.IsNullOrEmpty(to?.Background)) && from?.Background != to?.Background);
+                    || ((!MissingOnly || (to?.Image).IsNullOrEmpty()) && from?.Image != to?.Image)
+                    || ((!MissingOnly || (to?.Background).IsNullOrEmpty()) && from?.Background != to?.Background);
                 }
                 if (hasDiff)
                     return true;
@@ -37,7 +38,7 @@ namespace AutoFilterPresets.Setings.Models
 
         }
 
-        string CopyValue(string from, string to, bool MissingOnly) => !MissingOnly || string.IsNullOrEmpty(to) ? from : to;
+        string CopyValue(string from, string to, bool MissingOnly) => !MissingOnly || to.IsNullOrEmpty() ? from : to;
         void SyncCompilations(CollectionModel fromCollection, CollectionModel toCollection, bool MissingOnly=false)
         {
             foreach(var name in Settings.FilterList.Select(f => f.Name))

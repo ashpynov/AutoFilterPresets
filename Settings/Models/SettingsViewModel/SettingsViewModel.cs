@@ -1,5 +1,6 @@
 ﻿using Playnite.SDK;
 using Playnite.SDK.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -119,7 +120,7 @@ namespace AutoFilterPresets.Setings.Models
         ObservableCollection<CompilationModel> GetGroupedCompilations( IEnumerable<CompilationModel> compilations)
         {
             var themes = compilations
-                .Where(c => c.IsTheme && (!string.IsNullOrEmpty(c.FilterImagesFolder) || !string.IsNullOrEmpty(c.FilterBackgroundsFolder)))
+                .Where(c => c.IsTheme && (!c.FilterImagesFolder.IsNullOrEmpty() || !c.FilterBackgroundsFolder.IsNullOrEmpty()))
                 .OrderBy(c => c.Name)
                 .ToList();
 
@@ -129,7 +130,7 @@ namespace AutoFilterPresets.Setings.Models
                 .ToList();
 
             var notConfigured = compilations
-                .Where(c => c.IsTheme && string.IsNullOrEmpty(c.FilterImagesFolder) && string.IsNullOrEmpty(c.FilterBackgroundsFolder))
+                .Where(c => c.IsTheme && c.FilterImagesFolder.IsNullOrEmpty() && c.FilterBackgroundsFolder.IsNullOrEmpty())
                 .OrderBy(c => c.Name)
                 .ToList();
 

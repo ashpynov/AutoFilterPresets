@@ -2,6 +2,7 @@ using AutoFilterPresets.Helpers;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using Playnite.SDK.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -156,7 +157,7 @@ namespace AutoFilterPresets.Setings.Models
             if (filter1 == null || filter2 == null)
                 return filter1 == filter2;
 
-            return (filter1.Name is string && filter2.Name is string && filter1.Name.ToLower() == filter2.Name.ToLower())
+            return (filter1.Name is string && filter2.Name is string && filter1.Name.IsNoCaseEqual(filter2.Name))
             || Serialization.AreObjectsEqual(filter1.Settings,filter2.Settings);
         }
 
