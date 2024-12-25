@@ -78,19 +78,23 @@ namespace AutoFilterPresets.Views
         static int GetControllesStateHash()
         {
             int combinedHash = 17;
-            foreach (var controller in Controllers)
+            try
             {
-                foreach (var kvp in controller.LastInputState)
+                foreach (var controller in Controllers)
                 {
-                    int keyHash = kvp.Key.GetHashCode();
-                    int valueHash = kvp.Value.GetHashCode();
-                    unchecked // Allow arithmetic overflow, numbers will "wrap around"
+                    foreach (var kvp in controller.LastInputState)
                     {
-                        combinedHash = combinedHash * 23 + keyHash;
-                        combinedHash = combinedHash * 23 + valueHash;
+                        int keyHash = kvp.Key.GetHashCode();
+                        int valueHash = kvp.Value.GetHashCode();
+                        unchecked // Allow arithmetic overflow, numbers will "wrap around"
+                        {
+                            combinedHash = combinedHash * 23 + keyHash;
+                            combinedHash = combinedHash * 23 + valueHash;
+                        }
                     }
                 }
             }
+            catch { }
 
             return combinedHash;
         }
