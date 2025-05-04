@@ -5,7 +5,7 @@ Packages:
     ReleaseDate: 2025-05-04
     PackageUrl: https://github.com/ashpynov/AutoFilterPresets/releases/download/v0.14/AutoFilterPresets_1844176c-4d02-4bf8-b852-78b36a9de193_0_14.pext
     Changelog:
-      - Fixed initial appliing of autofilter
+      - Fixed initial applying of automatic filter
   - Version: 0.13
     RequiredApiVersion: 6.11.0
     ReleaseDate: 2024-12-25
