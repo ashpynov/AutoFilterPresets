@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Automation;
@@ -194,6 +195,21 @@ namespace AutoFilterPresets.Setings.Models
             {
                 Logger.Error(exception.Message);
             };
+        }
+
+        private void ApplyFilterPreset(FilterPreset preset)
+        {
+            PlayniteAPI.MainView.ApplyFilterPreset(preset);
+            dynamic model = Application.Current?.MainWindow?.DataContext;
+            if (model?.AppSettings?.Fullscreen == null)
+            {
+                return;
+            }
+            List<FilterPreset> databasePresets = model.SortedFilterFullscreenPresets;
+            if (!databasePresets.Any(a => a.Id == model.AppSettings.Fullscreen.SelectedFilterPreset))
+            {
+                model.AppSettings.Fullscreen.SelectedFilterPreset = Guid.Empty;
+            }
         }
     }
 }

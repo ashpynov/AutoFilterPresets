@@ -208,7 +208,7 @@ namespace AutoFilterPresets.Setings.Models
             }
             set
             {
-                PlayniteAPI.MainView.ApplyFilterPreset(value);
+                ApplyFilterPreset(value);
                 SetValue(ref activeFilterPreset, value);
             }
         }
@@ -295,7 +295,7 @@ namespace AutoFilterPresets.Setings.Models
             var currentPreset = FindAutoPreset();
             if (!AreFiltersEqual(activeFilterPreset, currentPreset))
             {
-                PlayniteAPI.MainView.ApplyFilterPreset(currentPreset);
+                ApplyFilterPreset(currentPreset);
                 SetValue(ref activeFilterPreset, currentPreset, nameof(ActiveFilterPreset));
 
                 Logger.Debug($"Automatic Filter {currentPreset?.Name} Applied");
