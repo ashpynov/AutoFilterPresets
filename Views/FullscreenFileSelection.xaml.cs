@@ -22,6 +22,7 @@ using AutoFilterPresets.Helpers;
 using AutoFilterPresets.Setings.Models;
 using Playnite.SDK;
 using Playnite.SDK.Plugins;
+using Playnite.SDK.Events;
 
 namespace AutoFilterPresets.Views
 {

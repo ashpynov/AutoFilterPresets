@@ -2,6 +2,7 @@ using AutoFilterPresets.Setings.Models;
 using AutoFilterPresets.Views;
 using Playnite.SDK;
 using Playnite.SDK.Models;
+using Playnite.SDK.Events;
 using System;
 using System.ComponentModel;
 using System.IO;

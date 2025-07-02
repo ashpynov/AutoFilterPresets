@@ -3,44 +3,16 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using Playnite.SDK.Events;
 using AutoFilterPresets.Setings.Models;
 
 namespace AutoFilterPresets.Views
 {
-    public enum ControllerInput
-    {
-        None,
-        Start,
-        Back,
-        LeftStick,
-        RightStick,
-        LeftShoulder,
-        RightShoulder,
-        Guide,
-        A,
-        B,
-        X,
-        Y,
-        DPadLeft,
-        DPadRight,
-        DPadUp,
-        DPadDown,
-        TriggerLeft,
-        TriggerRight,
-        LeftStickLeft,
-        LeftStickRight,
-        LeftStickUp,
-        LeftStickDown,
-        RightStickLeft,
-        RightStickRight,
-        RightStickUp,
-        RightStickDown
-    }
     public static class GameController
     {
         static Assembly playnite;
         static Type PinGameControllerInputBinding;
-        static Type PinControllerInput;
+
         static ConstructorInfo GameControllerInputBinding_ctor;
         static Type PinGameControllerGesture;
         static dynamic Controllers;
@@ -49,9 +21,8 @@ namespace AutoFilterPresets.Views
         {
             playnite = Assembly.LoadFrom(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "playnite.dll"));
             PinGameControllerInputBinding = playnite.GetType("Playnite.Input.GameControllerInputBinding");
-            PinControllerInput = playnite.GetType("Playnite.Input.ControllerInput");
             PinGameControllerGesture = playnite.GetType("Playnite.Input.GameControllerGesture");
-            GameControllerInputBinding_ctor = PinGameControllerInputBinding.GetConstructor(new Type[] { typeof(ICommand), PinControllerInput });
+            GameControllerInputBinding_ctor = PinGameControllerInputBinding.GetConstructor(new Type[] { typeof(ICommand), typeof(ControllerInput) });
 
             dynamic model = Application.Current.MainWindow.DataContext;
             Controllers = model.App.GameController.Controllers;
@@ -59,8 +30,7 @@ namespace AutoFilterPresets.Views
 
         public static InputBinding CreateInputBinding(ControllerInput button, ICommand command, object commandParameter=null)
         {
-            var input = PinControllerInput.GetField(button.ToString())?.GetValue(null);
-            var binding = GameControllerInputBinding_ctor.Invoke(new object[] { command, input }) as InputBinding;
+            var binding = GameControllerInputBinding_ctor.Invoke(new object[] { command, button }) as InputBinding;
             if (commandParameter != null)
             {
                 binding.CommandParameter = commandParameter;
